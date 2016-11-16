@@ -1,3 +1,5 @@
+
+
 var MyEForms = function() {
     this.widget = 'widget';
     this.body_element = $('body');
@@ -15,8 +17,6 @@ MyEForms.prototype = {
         return pattern.test(email_address);
     },
     validateEmpty: function(input_name, input_value) {
-        // console.log(input_name);
-        // console.log(input_value);
         if (input_value.length) {
            	return true;
         }
@@ -95,20 +95,23 @@ MyEForms.prototype = {
 
     },
     enable_required: function(el, disabled, required) {
-        var $el = el;
-        if ($el.attr('type') != 'button') {
+        // console.log(disabled);
+        // console.log(required);
+        if ($(el).attr('type') !== 'button') {
 
-            if (typeof disabled != 'undefined') {
-                $el.prop('disabled', disabled);
+            if (typeof disabled !== 'undefined') {
+                $(el).prop('disabled', disabled);
             }
-            if (typeof required != 'undefined') {
-                $el.prop('required', required);
+            if (typeof required !== 'undefined') {
+                $(el).prop('required', required);
             }
         }
     }
 }
 
 jQuery(document).ready(function($) {
+
+
     /* -- form elements --
     some are mandatory (can't be empty)
     txtClaimantName
@@ -143,50 +146,36 @@ jQuery(document).ready(function($) {
     var agent_landlord_dependent = $('#agent-landlord-dependent');
     var agent_landlord_dependent_children = agent_landlord_dependent.children();
     var landlord_agent_select = $('#txtLandlordAgent');
-
 	var claimant_info = $('#claimant-info');
-
-	// var change_of_address = $('#change-of-address');
-	// var change_of_address_fields = $('#change-of-address').children();
-
-	// var change_of_income = $('#change-of-income');
-	// var change_of_income_fields = $('#change-of-income').children();
-
-	// var change_of_household = $('#change-of-household');
-	// var change_of_household_fields = $('#change-of-household').children();
-
-	// var change_of_rent = $('#change-of-rent');
-	// var change_of_rent_fields = $('#change-of-rent').children();
-
-	// var other_change = $('#other-change');
-	// var other_change_fields = $('#other-change').children();
-
+	var change_of_address = $('#change-of-address');
     var fieldsets = $('fieldset');
-
     var conditional_fieldsets = $('fieldset.conditional');
 
+    //onload disable & hide all of the conditional fieldsets
+    conditional_fieldsets.each(function(index, el) {
+        instance_of_myeforms.enable_required($(el), true, false);
+    });
+    body_element.find('fieldset.conditional').hide();
+
+    //disable & hide dependents of agent/landlord select
     agent_landlord_dependent_children.filter(function(_index, e) {
         instance_of_myeforms.enable_required($(e), true, false);
     });
-
     agent_landlord_dependent.hide();
-    body_element.find('fieldset.conditional').hide();
+    
 
     $('#submitForm').on('click', function(event) {
     	event.preventDefault();
-    	//validate:
-    	claimant_info.find('input:enabled, select').each(function(index, el) {
-            // console.log($(el));
+    	//validate
+    	fieldsets.find('input:enabled, textarea, select').each(function(index, el) {
             var this_label = $("label[for='"+$(el).attr('id')+"']");
             var this_label_text = this_label.text();
-
+            var error ='';
             var valid_empty = instance_of_myeforms.validateEmpty(this_label_text,$(el).val()); 
 
-            var error ='';
-
-
+            //if class mandatory
             if(!valid_empty ){
-                error += this_label_text + ' cannot be empty.';  
+                error += this_label_text + ' Cannot be empty.';  
             }
 
             if($(el).attr('type') === 'email'){
@@ -219,39 +208,40 @@ jQuery(document).ready(function($) {
 		 //$('body').text(JSON.stringify($('form').serializeArray()));
     });
 
-    //to make this reusable
-    //class for select for switching conditional fieldsets
-    //class for conditionally dependent fieldsets
-    //Need to dynamically add a class that connects the fieldsets to its unique
-
+    //conditional based on select value matching id of fieldset
+    //todo: make this reusable
     $(body_element).on('change', '.form-conditional-select', function(event) {
         event.preventDefault();
         var select = $(this);
         var select_val = select.val();
-        //get all the fieldsets
         //check if the fieldset has the selected val id
         $(conditional_fieldsets).filter(function(_index, e) {
+            var self = $(this);
             var self_children = $(this).children();
             if (select_val === $(e).attr('id')) {
                 //and show that fieldset, enable all fields
                 self_children.each(function(index, el) {
-                    instance_of_myeforms.enable_required($(el), false);
+                    instance_of_myeforms.enable_required($(e), false);
                 });
                 body_element.find('fieldset#' + select_val).show();
             } else {
                 //hide and disable all the others
                 self_children.each(function(index, el) {
-                    instance_of_myeforms.enable_required($(el), true);
+                    instance_of_myeforms.enable_required($(e), true);
+                    //reset error messages on hidden fields
+                    $('.error',self).text('');
                 });
                 body_element.find('fieldset#' + $(e).attr('id')).hide();
             }
         });
     });
 
+    //conditional yes / no select
     $(landlord_agent_select).on('change', function(event) {
         event.preventDefault();
         var select = $(this);
         var select_val = select.val();
+        var parent_fieldset = $(this).closest('fieldset');
 
         if (select_val == 'yes') {
             agent_landlord_dependent_children.filter(function(_index, e) {
@@ -263,6 +253,23 @@ jQuery(document).ready(function($) {
                 instance_of_myeforms.enable_required($(e), true, false);
             });
             agent_landlord_dependent.hide();
+            $('.error', parent_fieldset).text('');
         }
     });
+
+
+    //use native datepicker if it exists otherwise use jquery ui
+    if (!Modernizr.inputtypes['date']) {
+        $('input[type=date]').datepicker();
+    }
+    // from:- https://www.tjvantoll.com/2012/06/30/creating-a-native-html5-datepicker-with-a-fallback-to-jquery-ui/
+    // if (!Modernizr.touch || !Modernizr.inputtypes.date) {
+    //     $('input[type=date]')
+    //         .attr('type', 'text')
+    //         .datepicker({
+    //             // Consistent format with the HTML5 picker
+    //             dateFormat: 'yy-mm-dd'
+    //         });
+    // }
+
 });
