@@ -13,5 +13,10 @@
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "devDependencies": {
+    "jquery": "^3.1.1",
+    "jquery-ui": "^1.12.1",
+    "modernizer": "^2.8.2"
+  }
 }
