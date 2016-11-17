@@ -14,13 +14,13 @@ body
 				//Claimant Name
 
 
-				label(for="txtClaimantName") Claimant Name*
+				label(for="txtClaimantName") Claimant Name
 				input(id="txtClaimantName", name="foo", type="text",  placeholder="Enter Text",  class="form-text mandatory")
 				p(class="form-help error")
 				//Claimant Address
 
 
-				label(for="txtClaimantAddress") Claimant Address*
+				label(for="txtClaimantAddress") Claimant Address
 				input(id="txtClaimantAddress", name="foo", type="text",  placeholder="Enter Text",  class="form-text mandatory")
 				p(class="form-help error")
 
@@ -29,7 +29,7 @@ body
 				//Claimant Telephone
 
 
-				label(for="txtClaimantTelephone") Claimant Telephone*
+				label(for="txtClaimantTelephone") Claimant Telephone
 				input(id="txtClaimantTelephone", name="foo", type="tel",  placeholder="Enter Text",  class="form-text mandatory")
 				p(class="form-help error")
 
@@ -38,7 +38,7 @@ body
 				//Claimant Email Address
 
 
-				label(for="txtClaimantEmail") Claimant Email Address*
+				label(for="txtClaimantEmail") Claimant Email Address
 				input(id="txtClaimantEmail", name="myFormData", type="email",  placeholder="Enter Text",  class="form-text mandatory")
 				p(class="form-help error")
 
@@ -47,7 +47,7 @@ body
 				//Claimant HB Reference
 
 
-				label(for="txtClaimantHBReference") Claimant HB Reference*
+				label(for="txtClaimantHBReference") Claimant HB Reference
 				input(id="txtClaimantHBReference", name="myFormData", type="text",  placeholder="Enter Text",  class="form-text mandatory")
 				p(class="form-help error")
 
@@ -56,14 +56,14 @@ body
 				//Claimant National Insurance Number
 
 
-				label(for="txtClaimantNationalInsuranceNumber") Claimant National Insurance Number*
+				label(for="txtClaimantNationalInsuranceNumber") Claimant National Insurance Number
 				input(id="txtClaimantNationalInsuranceNumber", name="myFormData", type="text",  placeholder="Enter Text",  class="form-text mandatory")
 				p(class="form-help error")
 
 
 				//Are you the Landlord/Agent?
 				label(for="txtLandlordAgent") Are you the Landlord/Agent?
-				select(id="txtLandlordAgent",  class="form-select form-conditional-select")
+				select(id="txtLandlordAgent",  class="form-select form-conditional-select mandatory")
 					option(value="") Select
 					option(value="yes") Yes
 					option(value="no") No
@@ -71,31 +71,31 @@ body
 
 				div(id="agent-landlord-dependent")
 					//Agent/Landlord Name
-					label(for="txtLandlordAgentName") Agent/Landlord Name* 
+					label(for="txtLandlordAgentName") Agent/Landlord Name 
 					input(id="txtLandlordAgentName", type="text",  name="myFormData", placeholder="Enter Text",  class="form-text mandatory conditional-dependent")
 					p(class="form-help error")
 
 					//Agent/Landlord Address
-					label(for="txtLandlordAgentAddress") Agent/Landlord Address* 
+					label(for="txtLandlordAgentAddress") Agent/Landlord Address 
 					input(id="txtLandlordAgentAddress", type="text", name="myFormData",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
 
 					//Agent/Landlord Email Address
-					label(for="txtLandlordAgentEmailAddress") Agent/Landlord Email Address* 
+					label(for="txtLandlordAgentEmailAddress") Agent/Landlord Email Address 
 					input(id="txtLandlordAgentEmailAddress", type="email", name="myFormData",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
 
 					//Agent/Landlord Telephone
-					label(for="txtLandlordAgentTelephone") Agent/Landlord Telephone*
+					label(for="txtLandlordAgentTelephone") Agent/Landlord Telephone
 					input(id="txtLandlordAgentTelephone", type="text", name="myFormData",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
 
 
 
 
-				//Nature of Request*
-				label(for="selectNatureRequest") Nature of Request*
-				select(id="selectNatureRequest",  class="form-select form-conditional-select")
+				//Nature of Request
+				label(for="selectNatureRequest") Nature of Request
+				select(id="selectNatureRequest",  class="form-select form-conditional-select mandatory")
 					option(value="") Nature of Request
 					option(value="change-of-address") Change of Address 
 					option(value="change-of-income") Change of Income 

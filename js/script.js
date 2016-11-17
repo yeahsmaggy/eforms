@@ -169,6 +169,8 @@ jQuery(document).ready(function($) {
     });
     agent_landlord_dependent.hide();
 
+    //add asterix to mandatory fields
+    $(".mandatory").prev().append('*');
 
     $('#submitForm').on('click', function(event) {
         event.preventDefault();
@@ -278,7 +280,7 @@ jQuery(document).ready(function($) {
     //     }
     // });
     //https://code.tutsplus.com/tutorials/uploading-files-with-ajax--net-21077
-
+    //http://stackoverflow.com/questions/13656066/html5-multiple-file-upload-upload-one-by-one-through-ajax#13692285
 
     $('#myFiles').on('change', function() {
         var file_input = this;
@@ -305,6 +307,7 @@ jQuery(document).ready(function($) {
 
         $.ajax({
             'type': 'POST',
+            //would need equivalent in java
             'url': 'upload.php',
             'data': form_data,
             'processData': false,
