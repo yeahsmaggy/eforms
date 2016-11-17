@@ -9,19 +9,19 @@ head
 	script(type="text/javascript",   src="../js/script.js")
 body
 	div(id="content")
-		form(id="myForm")
+		form(id="myForm",enctype="multipart/form-data", action="upload.php")
 			fieldset(id="claimant-info")
 				//Claimant Name
 
 
 				label(for="txtClaimantName") Claimant Name*
-				input(id="txtClaimantName", name="myFormData", type="text",  placeholder="Enter Text",  class="form-text mandatory")
+				input(id="txtClaimantName", name="foo", type="text",  placeholder="Enter Text",  class="form-text mandatory")
 				p(class="form-help error")
 				//Claimant Address
 
 
 				label(for="txtClaimantAddress") Claimant Address*
-				input(id="txtClaimantAddress", name="myFormData", type="text",  placeholder="Enter Text",  class="form-text mandatory")
+				input(id="txtClaimantAddress", name="foo", type="text",  placeholder="Enter Text",  class="form-text mandatory")
 				p(class="form-help error")
 
 
@@ -30,7 +30,7 @@ body
 
 
 				label(for="txtClaimantTelephone") Claimant Telephone*
-				input(id="txtClaimantTelephone", name="myFormData", type="tel",  placeholder="Enter Text",  class="form-text mandatory")
+				input(id="txtClaimantTelephone", name="foo", type="tel",  placeholder="Enter Text",  class="form-text mandatory")
 				p(class="form-help error")
 
 
@@ -266,6 +266,11 @@ body
 				p(class="form-help error")
 
 			fieldset(id="files-upload")
-				input(type="file")
+				p(class="form-help error")
+				p(class="form-help response", style="color:black;")
+				input(id="myFiles",type="file" multiple)
+				//- button(id="addFileUpload", type="button") Add one
+				ul(id="image-list")
+
 			input(id="submitForm", type="submit",  text="Submit") 
 

@@ -1,5 +1,3 @@
-
-
 var MyEForms = function() {
     this.widget = 'widget';
     this.body_element = $('body');
@@ -18,7 +16,7 @@ MyEForms.prototype = {
     },
     validateEmpty: function(input_name, input_value) {
         if (input_value.length) {
-           	return true;
+            return true;
         }
     },
     validateTelephone: function(telno) {
@@ -106,6 +104,14 @@ MyEForms.prototype = {
                 $(el).prop('required', required);
             }
         }
+    },
+    file_upload: function() {
+        //user is shown file upload field
+        //user picks file
+        //user hits upload button
+
+        //filename appears in list
+        //for each file upload action processed or error returned
     }
 }
 
@@ -146,8 +152,8 @@ jQuery(document).ready(function($) {
     var agent_landlord_dependent = $('#agent-landlord-dependent');
     var agent_landlord_dependent_children = agent_landlord_dependent.children();
     var landlord_agent_select = $('#txtLandlordAgent');
-	var claimant_info = $('#claimant-info');
-	var change_of_address = $('#change-of-address');
+    var claimant_info = $('#claimant-info');
+    var change_of_address = $('#change-of-address');
     var fieldsets = $('fieldset');
     var conditional_fieldsets = $('fieldset.conditional');
 
@@ -162,50 +168,50 @@ jQuery(document).ready(function($) {
         instance_of_myeforms.enable_required($(e), true, false);
     });
     agent_landlord_dependent.hide();
-    
+
 
     $('#submitForm').on('click', function(event) {
-    	event.preventDefault();
-    	//validate
-    	fieldsets.find('input:enabled, textarea, select').each(function(index, el) {
-            var this_label = $("label[for='"+$(el).attr('id')+"']");
+        event.preventDefault();
+        //validate
+        fieldsets.find('input:enabled, textarea, select').each(function(index, el) {
+            var this_label = $("label[for='" + $(el).attr('id') + "']");
             var this_label_text = this_label.text();
-            var error ='';
-            var valid_empty = instance_of_myeforms.validateEmpty(this_label_text,$(el).val()); 
+            var error = '';
+            var valid_empty = instance_of_myeforms.validateEmpty(this_label_text, $(el).val());
 
             //if class mandatory
-            if(!valid_empty ){
-                error += this_label_text + ' Cannot be empty.';  
+            if (!valid_empty) {
+                error += this_label_text + ' Cannot be empty.';
             }
 
-            if($(el).attr('type') === 'email'){
-                var valid_email = instance_of_myeforms.validateEmail($(el).val()); 
-                if(!valid_email){
-                     error += ' Please enter a valid email address.';
+            if ($(el).attr('type') === 'email') {
+                var valid_email = instance_of_myeforms.validateEmail($(el).val());
+                if (!valid_email) {
+                    error += ' Please enter a valid email address.';
                 }
             };
 
-            if($(el).attr('type') === 'tel'){
-                var valid_telephone = instance_of_myeforms.validateTelephone($(el).val()); 
-                if(!valid_telephone){
+            if ($(el).attr('type') === 'tel') {
+                var valid_telephone = instance_of_myeforms.validateTelephone($(el).val());
+                if (!valid_telephone) {
                     error += ' Please enter a valid telephone number.'
                 }
             }
 
-            if($(el).is('select')){
-                if(!$(el).val().length){
+            if ($(el).is('select')) {
+                if (!$(el).val().length) {
                     error += ' Please select a value.'
-                };        
+                };
             }
 
-            if(error.length){
-                 $(el).next('.error').text(error);
-            }else{
+            if (error.length) {
+                $(el).next('.error').text(error);
+            } else {
                 $(el).next('.error').text('');
             }
-    	});
+        });
 
-		 //$('body').text(JSON.stringify($('form').serializeArray()));
+        //$('body').text(JSON.stringify($('form').serializeArray()));
     });
 
     //conditional based on select value matching id of fieldset
@@ -229,7 +235,7 @@ jQuery(document).ready(function($) {
                 self_children.each(function(index, el) {
                     instance_of_myeforms.enable_required($(e), true);
                     //reset error messages on hidden fields
-                    $('.error',self).text('');
+                    $('.error', self).text('');
                 });
                 body_element.find('fieldset#' + $(e).attr('id')).hide();
             }
@@ -257,6 +263,65 @@ jQuery(document).ready(function($) {
         }
     });
 
+    // $(':file').on('change', function(){
+    //     var file = this.files[0];
+
+    // });
+
+    //manual multiple
+    // $('#addFileUpload').on('click', function(){
+    //     // console.log($('fieldset#files-upload > input:file').length);
+    //     if($('fieldset#files-upload > input:file').length < 5){
+    //       $('input:file:last-of-type').after('<br><input type="file" name="myfile[]"/>');
+    //     }else{
+    //         $('fieldset#files-upload > .error').text('Max number of files 5');
+    //     }
+    // });
+    //https://code.tutsplus.com/tutorials/uploading-files-with-ajax--net-21077
+
+
+    $('#myFiles').on('change', function() {
+        var file_input = this;
+        var form_data = false;
+
+        if (window.FormData) {
+            form_data = new FormData();
+            //hide uploadButton
+        }
+        var i = 0;
+        var files_array = [];
+        for (i; i < this.files.length; i++) {
+
+            if (form_data) {
+                if(this.files[i].type !== 'application/pdf'){
+                    $('#files-upload .response').text('must be a pdf');
+                    return;
+                }else{
+                    form_data.append("files[]", this.files[i]);
+                }
+            }
+
+        }
+
+        $.ajax({
+            'type': 'POST',
+            'url': 'upload.php',
+            'data': form_data,
+            'processData': false,
+            'contentType': false,
+            success: function(res) {
+                console.log(res);
+                $('#files-upload .response').text(res);
+            },
+            error: function(res) {
+                console.log(res);
+            }
+        });
+        // $(':file').each(function(index, el) {
+        //     console.log(el.files[0]);
+
+        // });
+    });
 
     //use native datepicker if it exists otherwise use jquery ui
     if (!Modernizr.inputtypes['date']) {

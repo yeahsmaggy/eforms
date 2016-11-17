@@ -7,9 +7,12 @@ var gulp        = require('gulp'),
 gulp.task('serve', function(){
 	bs.init({
 		browser: ["google chrome"],
-		 server: {
-            baseDir: "./"
-        }
+        proxy: "l.jade",
+        port: 8081
+		 // server: {
+   //          // baseDir: "./",
+
+   //      }
 	});
 	gulp.watch(['*.html', 'css/*.css', 'js/*.js']).on('change',function(event) {
 		//body tag has to be present for reload to work
