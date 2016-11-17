@@ -2,14 +2,14 @@ DOCTYPE(5)
 html(lang="en")
 	head
 		include ../includes/head.html
-		link(rel="stylesheet",  type="text/css",  href="../css/base.css")
-		link(rel="stylesheet",  type="text/css",  href="../css/benefit.css")
-		link(rel="stylesheet",  type="text/css",  href="../css/ajw-custom.css")
-		link(rel="stylesheet",  type="text/css",  href="../bower_components/jquery-ui/themes/base/jquery-ui.min.css")
-		script(type="text/javascript", src="../bower_components/jquery/dist/jquery.min.js")
-		script(type="text/javascript", src="../bower_components/jquery-ui/jquery-ui.min.js")
-		script(type="text/javascript", src="../bower_components/modernizer/modernizr.js")
-		script(type="text/javascript",   src="../js/script.js")
+		link(rel="stylesheet",  type="text/css",  href="css/base.css")
+		link(rel="stylesheet",  type="text/css",  href="css/benefit.css")
+		link(rel="stylesheet",  type="text/css",  href="css/ajw-custom.css")
+		link(rel="stylesheet",  type="text/css",  href="bower_components/jquery-ui/themes/base/jquery-ui.min.css")
+		script(type="text/javascript", src="bower_components/jquery/dist/jquery.min.js")
+		script(type="text/javascript", src="bower_components/jquery-ui/jquery-ui.min.js")
+		script(type="text/javascript", src="bower_components/modernizer/modernizr.js")
+		script(type="text/javascript",   src="js/script.js")
 
 	include ../includes/header.html
 	div(id="content")
@@ -100,7 +100,7 @@ html(lang="en")
 				//Nature of Request
 				label(for="selectNatureRequest") Nature of Request
 				select(id="selectNatureRequest",  class="form-select form-conditional-select mandatory")
-					option(value="") Nature of Request
+					option(value="") Choose
 					option(value="change-of-address") Change of Address 
 					option(value="change-of-income") Change of Income 
 					option(value="change-of-household") Change of Household 
@@ -151,7 +151,7 @@ html(lang="en")
 				//What is the change?
 				label(for="txtIncomeChange") What is the change?
 				select(id="txtIncomeChange", name="myFormData",  class="form-select mandatory")
-					option Choose
+					option(value="") Choose
 					option(value="started-work") Started Work
 					option(value="finished-work") Finished Work
 					option(value="claiming-benefits") Claiming Benefits
@@ -160,7 +160,7 @@ html(lang="en")
 				//Who does it relate to?
 				label(for="txtIncomeWhoRelateTo") Who does it relate to?
 				select(id="txtIncomeWhoRelateTo", name="myFormData",  class="form-select mandatory")
-					option Choose
+					option(value="") Choose
 					option(value="claimant") Claimant
 					option(value="partner") Partner 
 					option(value="other") Other
@@ -179,6 +179,7 @@ html(lang="en")
 				//Number of hours worked 
 				label(for="txtIncomeNumberHoursWorked") Number of hours worked?
 				input(id="txtIncomeNumberHoursWorked",  type="number", name="myFormData",  placeholder="Enter Text",  class="form-text mandatory")
+				p(class="form-help error")
 
 				//Start date
 				label(for="txtIncomeStartDate") Start date?
@@ -211,9 +212,11 @@ html(lang="en")
 				//Type of Change
 				label(for="txtChangeHouseholdTypeChange") Type of Change
 				select(id="txtChangeHouseholdTypeChange",  class="form-select mandatory")
-					option Claimant
-					option Partner 
-					option Other
+					option(value="") Choose
+					option(value="claimant") Claimant
+					option(value="partner") Partner 
+					option(value="other") Other
+				p(class="form-help error")
 
 				//Name(s) of person moving
 				label(for="txtChangeHouseholdNamePersonMoving") Name(s) of person moving

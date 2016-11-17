@@ -181,6 +181,8 @@ jQuery(document).ready(function($) {
             var error = '';
             var valid_empty = instance_of_myeforms.validateEmpty(this_label_text, $(el).val());
 
+            console.log($(el));
+
             //if class mandatory
             if (!valid_empty) {
                 error += this_label_text + ' Cannot be empty.';
