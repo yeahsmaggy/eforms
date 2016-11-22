@@ -104,19 +104,11 @@ MyEForms.prototype = {
                 $(el).prop('required', required);
             }
         }
-    },
-    file_upload: function() {
-        //user is shown file upload field
-        //user picks file
-        //user hits upload button
-
-        //filename appears in list
-        //for each file upload action processed or error returned
     }
 }
 
 jQuery(document).ready(function($) {
-
+    $('body').addClass('jsLoaded');
 
     /* -- form elements --
     some are mandatory (can't be empty)
@@ -185,7 +177,9 @@ jQuery(document).ready(function($) {
 
             //if class mandatory
             if (!valid_empty) {
-                error += this_label_text + ' Cannot be empty.';
+                error += 'Please enter a value.';
+                //error += 'This field cannot be empty.';
+                //error += this_label_text + ' . This field cannot be empty.';
             }
 
             if ($(el).attr('type') === 'email') {
@@ -253,14 +247,14 @@ jQuery(document).ready(function($) {
         var select_val = select.val();
         var parent_fieldset = $(this).closest('fieldset');
 
-        if (select_val == 'yes') {
+        if (select_val == 'no') {
             agent_landlord_dependent_children.filter(function(_index, e) {
                 instance_of_myeforms.enable_required($(e), false, true);
             });
             agent_landlord_dependent.show();
         } else {
             agent_landlord_dependent_children.filter(function(_index, e) {
-                instance_of_myeforms.enable_required($(e), true, false);
+                //instance_of_myeforms.enable_required($(e), true, false);
             });
             agent_landlord_dependent.hide();
             $('.error', parent_fieldset).text('');
@@ -315,11 +309,11 @@ jQuery(document).ready(function($) {
             'processData': false,
             'contentType': false,
             success: function(res) {
-                console.log(res);
+                //console.log(res);
                 $('#files-upload .response').text(res);
             },
             error: function(res) {
-                console.log(res);
+                //console.log(res);
             }
         });
         // $(':file').each(function(index, el) {

@@ -1,16 +1,16 @@
-DOCTYPE(5)
-html(lang="en")
-	head
-		include ../includes/head.html
-		link(rel="stylesheet",  type="text/css",  href="css/base.css")
-		link(rel="stylesheet",  type="text/css",  href="css/benefit.css")
-		link(rel="stylesheet",  type="text/css",  href="css/ajw-custom.css")
-		link(rel="stylesheet",  type="text/css",  href="bower_components/jquery-ui/themes/base/jquery-ui.min.css")
-		script(type="text/javascript", src="bower_components/jquery/dist/jquery.min.js")
-		script(type="text/javascript", src="bower_components/jquery-ui/jquery-ui.min.js")
-		script(type="text/javascript", src="bower_components/modernizer/modernizr.js")
-		script(type="text/javascript",   src="js/script.js")
+doctype html(lang="en")
+head
+	include ../includes/head.html
+	link(rel="stylesheet",  type="text/css",  href="css/base.css")
+	link(rel="stylesheet",  type="text/css",  href="css/benefit.css")
+	link(rel="stylesheet",  type="text/css",  href="css/ajw-custom.css")
+	link(rel="stylesheet",  type="text/css",  href="bower_components/jquery-ui/themes/base/jquery-ui.min.css")
+	script(type="text/javascript", src="bower_components/jquery/dist/jquery.min.js")
+	script(type="text/javascript", src="bower_components/jquery-ui/jquery-ui.min.js")
+	script(type="text/javascript", src="bower_components/modernizer/modernizr.js")
+	script(type="text/javascript", src="js/script.js")
 
+body(style="transition:top 1s ease;-webkit-transition:top 1s ease;-moz-transition:top 1s ease;")
 	include ../includes/header.html
 	div(id="content")
 		form(id="myForm",enctype="multipart/form-data", action="upload.php")
@@ -280,4 +280,4 @@ html(lang="en")
 				ul(id="image-list")
 
 			input(id="submitForm", type="submit",  text="Submit") 
-	include ../includes/footer.html
+include ../includes/footer.html
