@@ -92,6 +92,42 @@ MyEForms.prototype = {
         return true;
 
     },
+    validateAll: function(el){
+
+            var this_label = $("label[for='" + $(el).attr('id') + "']");
+            var this_label_text = this_label.text();
+            var error = '';
+
+            var valid_empty = this.validateEmpty(this_label_text, $(el).val());
+            //if class mandatory
+            if (!valid_empty) {
+                error += 'Please enter a value.';
+                //error += 'This field cannot be empty.';
+                //error += this_label_text + ' . This field cannot be empty.';
+            }
+
+            if ($(el).attr('type') === 'email') {
+                var valid_email = this.validateEmail($(el).val());
+                if (!valid_email) {
+                    error += ' Please enter a valid email address.';
+                }
+            };
+
+            if ($(el).attr('type') === 'tel') {
+                var valid_telephone = this.validateTelephone($(el).val());
+                if (!valid_telephone) {
+                    error += ' Please enter a valid telephone number.'
+                }
+            }
+
+            if ($(el).is('select')) {
+                if (!$(el).val().length) {
+                    error += ' Please select a value.'
+                };
+            }
+            return error;
+
+    },
     enable_required: function(el, disabled, required) {
         // console.log(disabled);
         // console.log(required);
@@ -168,39 +204,8 @@ jQuery(document).ready(function($) {
         event.preventDefault();
         //validate
         fieldsets.find('input:enabled, textarea, select').each(function(index, el) {
-            var this_label = $("label[for='" + $(el).attr('id') + "']");
-            var this_label_text = this_label.text();
-            var error = '';
-            var valid_empty = instance_of_myeforms.validateEmpty(this_label_text, $(el).val());
 
-            console.log($(el));
-
-            //if class mandatory
-            if (!valid_empty) {
-                error += 'Please enter a value.';
-                //error += 'This field cannot be empty.';
-                //error += this_label_text + ' . This field cannot be empty.';
-            }
-
-            if ($(el).attr('type') === 'email') {
-                var valid_email = instance_of_myeforms.validateEmail($(el).val());
-                if (!valid_email) {
-                    error += ' Please enter a valid email address.';
-                }
-            };
-
-            if ($(el).attr('type') === 'tel') {
-                var valid_telephone = instance_of_myeforms.validateTelephone($(el).val());
-                if (!valid_telephone) {
-                    error += ' Please enter a valid telephone number.'
-                }
-            }
-
-            if ($(el).is('select')) {
-                if (!$(el).val().length) {
-                    error += ' Please select a value.'
-                };
-            }
+            var error = instance_of_myeforms.validateAll($(el));
 
             if (error.length) {
                 $(el).next('.error').text(error);
