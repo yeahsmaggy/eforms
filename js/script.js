@@ -15,9 +15,11 @@ MyEForms.prototype = {
         return pattern.test(email_address);
     },
     validateEmpty: function(input_name, input_value) {
-        if (input_value.length) {
+         if (input_value.length) {
             return true;
         }
+
+
     },
     validateTelephone: function(telno) {
 
@@ -92,43 +94,43 @@ MyEForms.prototype = {
         return true;
 
     },
-    validateAll: function(el){
+    validateAll: function(el) {
 
-            var this_label = $("label[for='" + $(el).attr('id') + "']");
-            var this_label_text = this_label.text();
-            var error = '';
+        var this_label = $("label[for='" + $(el).attr('id') + "']");
+        var this_label_text = this_label.text();
+        var error = '';
 
-            var valid_empty = this.validateEmpty(this_label_text, $(el).val());
-            //if class mandatory
-            if (!valid_empty) {
-                error += 'Please enter a value.';
-                //error += 'This field cannot be empty.';
-                //error += this_label_text + ' . This field cannot be empty.';
+        var valid_empty = this.validateEmpty(this_label_text, $(el).val());
+        //if class mandatory
+        if (!$(el).is('select') &&  !valid_empty) {
+            error += 'Please enter a value.';
+            //error += 'This field cannot be empty.';
+            //error += this_label_text + ' . This field cannot be empty.';
+        }
+
+        if ($(el).attr('type') === 'email') {
+            var valid_email = this.validateEmail($(el).val());
+            if (!valid_email) {
+                error += ' Please enter a valid email address.';
             }
+        };
+        if ($(el).attr('type') === 'tel') {
+            var valid_telephone = this.validateTelephone($(el).val());
+            if (!valid_telephone) {
+                error += ' Please enter a valid telephone number.'
+            }
+        }
 
-            if ($(el).attr('type') === 'email') {
-                var valid_email = this.validateEmail($(el).val());
-                if (!valid_email) {
-                    error += ' Please enter a valid email address.';
-                }
+        if ($(el).is('select')) {
+            if (!$(el).val().length) {
+                error += ' Please select an option.'
             };
-            if ($(el).attr('type') === 'tel') {
-                var valid_telephone = this.validateTelephone($(el).val());
-                if (!valid_telephone) {
-                    error += ' Please enter a valid telephone number.'
-                }
-            }
-
-            if ($(el).is('select')) {
-                if (!$(el).val().length) {
-                    error += ' Please select a value.'
-                };
-            }
-            return error;
+        }
+        return error;
 
 
     },
-    enable_required: function(el, disabled, required) {
+    enabledRequired: function(el, disabled, required) {
         // console.log(disabled);
         // console.log(required);
         if ($(el).attr('type') !== 'button') {
@@ -187,33 +189,33 @@ jQuery(document).ready(function($) {
 
     //onload disable & hide all of the conditional fieldsets
     conditional_fieldsets.each(function(index, el) {
-        instance_of_myeforms.enable_required($(el), true, false);
+        instance_of_myeforms.enabledRequired($(el), true, false);
     });
     body_element.find('fieldset.conditional').hide();
 
     //disable & hide dependents of agent/landlord select
     agent_landlord_dependent_children.filter(function(_index, e) {
-        instance_of_myeforms.enable_required($(e), true, false);
+        instance_of_myeforms.enabledRequired($(e), true, false);
     });
     agent_landlord_dependent.hide();
 
 
 
-//only allow numbers in number inputs
-//http://stackoverflow.com/questions/469357/html-text-input-allow-only-numeric-input#469362
-  $("input[type=number]").keydown(function (e) {
+    //only allow numbers in number inputs
+    //http://stackoverflow.com/questions/469357/html-text-input-allow-only-numeric-input#469362
+    $("input[type=number]").keydown(function(e) {
         // Allow: backspace, delete, tab, escape, enter and .
         if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
-             // Allow: Ctrl+A
+            // Allow: Ctrl+A
             (e.keyCode == 65 && e.ctrlKey === true) ||
-             // Allow: Ctrl+C
+            // Allow: Ctrl+C
             (e.keyCode == 67 && e.ctrlKey === true) ||
-             // Allow: Ctrl+X
+            // Allow: Ctrl+X
             (e.keyCode == 88 && e.ctrlKey === true) ||
-             // Allow: home, end, left, right
+            // Allow: home, end, left, right
             (e.keyCode >= 35 && e.keyCode <= 39)) {
-                 // let it happen, don't do anything
-                 return;
+            // let it happen, don't do anything
+            return;
         }
         // Ensure that it is a number and stop the keypress
         if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
@@ -225,6 +227,21 @@ jQuery(document).ready(function($) {
     //add asterix to mandatory fields
     $(".mandatory").prev().append('*');
 
+    //validate when input changes
+    $('body input, body select').on('change', function(){
+
+            var error = instance_of_myeforms.validateAll(this);
+
+            if (error.length) {
+                $(this).next('.error').text(error);
+                return;
+            } else {
+                $(this).next('.error').text('');
+            }
+
+    });
+
+
     $('#submitForm').on('click', function(event) {
         event.preventDefault();
         //validate
@@ -234,6 +251,7 @@ jQuery(document).ready(function($) {
 
             if (error.length) {
                 $(el).next('.error').text(error);
+                return;
             } else {
                 $(el).next('.error').text('');
             }
@@ -247,7 +265,7 @@ jQuery(document).ready(function($) {
 
     //conditional based on select value matching id of fieldset
     //todo: make this reusable
-    $(body_element).on('change', '.form-conditional-select', function(event) {
+    $(body_element).on('change', '.conditional-fieldset-select', function(event) {
         event.preventDefault();
         var select = $(this);
         var select_val = select.val();
@@ -258,13 +276,13 @@ jQuery(document).ready(function($) {
             if (select_val === $(e).attr('id')) {
                 //and show that fieldset, enable all fields
                 self_children.each(function(index, el) {
-                    instance_of_myeforms.enable_required($(e), false);
+                    instance_of_myeforms.enabledRequired($(e), false);
                 });
                 body_element.find('fieldset#' + select_val).show();
             } else {
                 //hide and disable all the others
                 self_children.each(function(index, el) {
-                    instance_of_myeforms.enable_required($(e), true);
+                    instance_of_myeforms.enabledRequired($(e), true);
                     //reset error messages on hidden fields
                     $('.error', self).text('');
                 });
@@ -278,19 +296,18 @@ jQuery(document).ready(function($) {
         event.preventDefault();
         var select = $(this);
         var select_val = select.val();
-        var parent_fieldset = $(this).closest('fieldset');
 
         if (select_val == 'no') {
             agent_landlord_dependent_children.filter(function(_index, e) {
-                instance_of_myeforms.enable_required($(e), false, true);
+                instance_of_myeforms.enabledRequired($(e), false, true);
             });
             agent_landlord_dependent.show();
         } else {
             agent_landlord_dependent_children.filter(function(_index, e) {
-                //instance_of_myeforms.enable_required($(e), true, false);
+                //instance_of_myeforms.enabledRequired($(e), true, false);
             });
             agent_landlord_dependent.hide();
-            $('.error', parent_fieldset).text('');
+            $('.error', $('#agent-landlord-dependent')).text('');
         }
     });
 
@@ -324,10 +341,10 @@ jQuery(document).ready(function($) {
         for (i; i < this.files.length; i++) {
 
             if (form_data) {
-                if(this.files[i].type !== 'application/pdf'){
+                if (this.files[i].type !== 'application/pdf') {
                     $('#files-upload .response').text('must be a pdf');
                     return;
-                }else{
+                } else {
                     form_data.append("files[]", this.files[i]);
                 }
             }

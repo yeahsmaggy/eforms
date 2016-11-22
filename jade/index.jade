@@ -67,7 +67,7 @@ body(style="transition:top 1s ease;-webkit-transition:top 1s ease;-moz-transitio
 
 				//Are you the Landlord/Agent?
 				label(for="txtLandlordAgent") Are you the Landlord/Agent?
-				select(id="txtLandlordAgent",  class="form-select form-conditional-select mandatory")
+				select(id="txtLandlordAgent",  class="form-select   mandatory")
 					option(value="") Select
 					option(value="yes") Yes
 					option(value="no") No
@@ -91,7 +91,7 @@ body(style="transition:top 1s ease;-webkit-transition:top 1s ease;-moz-transitio
 
 					//Agent/Landlord Telephone
 					label(for="txtLandlordAgentTelephone") Agent/Landlord Telephone
-					input(id="txtLandlordAgentTelephone", type="text", name="myFormData",  placeholder="Enter Text",  class="form-text mandatory")
+					input(id="txtLandlordAgentTelephone", type="tel", name="myFormData",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
 
 
@@ -99,7 +99,7 @@ body(style="transition:top 1s ease;-webkit-transition:top 1s ease;-moz-transitio
 
 				//Nature of Request
 				label(for="selectNatureRequest") Nature of Request
-				select(id="selectNatureRequest",  class="form-select form-conditional-select mandatory")
+				select(id="selectNatureRequest",  class="form-select conditional-fieldset-select mandatory")
 					option(value="") Choose
 					option(value="change-of-address") Change of Address 
 					option(value="change-of-income") Change of Income 
