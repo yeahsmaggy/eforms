@@ -112,7 +112,6 @@ MyEForms.prototype = {
                     error += ' Please enter a valid email address.';
                 }
             };
-
             if ($(el).attr('type') === 'tel') {
                 var valid_telephone = this.validateTelephone($(el).val());
                 if (!valid_telephone) {
@@ -126,6 +125,7 @@ MyEForms.prototype = {
                 };
             }
             return error;
+
 
     },
     enable_required: function(el, disabled, required) {
@@ -197,6 +197,31 @@ jQuery(document).ready(function($) {
     });
     agent_landlord_dependent.hide();
 
+
+
+//only allow numbers in number inputs
+//http://stackoverflow.com/questions/469357/html-text-input-allow-only-numeric-input#469362
+  $("input[type=number]").keydown(function (e) {
+        // Allow: backspace, delete, tab, escape, enter and .
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+             // Allow: Ctrl+A
+            (e.keyCode == 65 && e.ctrlKey === true) ||
+             // Allow: Ctrl+C
+            (e.keyCode == 67 && e.ctrlKey === true) ||
+             // Allow: Ctrl+X
+            (e.keyCode == 88 && e.ctrlKey === true) ||
+             // Allow: home, end, left, right
+            (e.keyCode >= 35 && e.keyCode <= 39)) {
+                 // let it happen, don't do anything
+                 return;
+        }
+        // Ensure that it is a number and stop the keypress
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();
+        }
+    });
+
+
     //add asterix to mandatory fields
     $(".mandatory").prev().append('*');
 
@@ -212,7 +237,10 @@ jQuery(document).ready(function($) {
             } else {
                 $(el).next('.error').text('');
             }
+
+            // console.log(error);
         });
+        // console.log('still error' + still_an_error);
 
         //$('body').text(JSON.stringify($('form').serializeArray()));
     });
