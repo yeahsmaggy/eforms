@@ -1,283 +1,284 @@
-doctype html(lang="en")
-head
-	include ../includes/head.html
-	link(rel="stylesheet",  type="text/css",  href="css/base.css")
-	link(rel="stylesheet",  type="text/css",  href="css/benefit.css")
-	link(rel="stylesheet",  type="text/css",  href="css/ajw-custom.css")
-	link(rel="stylesheet",  type="text/css",  href="bower_components/jquery-ui/themes/base/jquery-ui.min.css")
-	script(type="text/javascript", src="bower_components/jquery/dist/jquery.min.js")
-	script(type="text/javascript", src="bower_components/jquery-ui/jquery-ui.min.js")
-	script(type="text/javascript", src="bower_components/modernizer/modernizr.js")
-	script(type="text/javascript", src="js/script.js")
+doctype
+html(lang="en")
+	head
+		include ../includes/head.html
+		link(rel="stylesheet",  type="text/css",  href="css/base.css")
+		link(rel="stylesheet",  type="text/css",  href="css/benefit.css")
+		link(rel="stylesheet",  type="text/css",  href="css/ajw-custom.css")
+		link(rel="stylesheet",  type="text/css",  href="bower_components/jquery-ui/themes/base/jquery-ui.min.css")
+		script(type="text/javascript", src="bower_components/jquery/dist/jquery.min.js")
+		script(type="text/javascript", src="bower_components/jquery-ui/jquery-ui.min.js")
+		script(type="text/javascript", src="bower_components/modernizer/modernizr.js")
+		script(type="text/javascript", src="js/benefitChangeofDetails.js")
 
-body(style="transition:top 1s ease;-webkit-transition:top 1s ease;-moz-transition:top 1s ease;")
-	include ../includes/header.html
-	div(id="content")
-		form(id="myForm",enctype="multipart/form-data", action="upload.php")
-			fieldset(id="claimant-info")
-				//Claimant Name
-
-
-				label(for="txtClaimantName") Claimant Name
-				input(id="txtClaimantName", name="foo", type="text",  placeholder="Enter Text",  class="form-text mandatory")
-				p(class="form-help error")
-				//Claimant Address
+	body(style="transition:top 1s ease;-webkit-transition:top 1s ease;-moz-transition:top 1s ease;")
+		include ../includes/header.html
+		div(id="content")
+			form(id="myForm",enctype="multipart/form-data", action="upload.php")
+				fieldset(id="claimant-info")
+					//Claimant Name
 
 
-				label(for="txtClaimantAddress") Claimant Address
-				input(id="txtClaimantAddress", name="foo", type="text",  placeholder="Enter Text",  class="form-text mandatory")
-				p(class="form-help error")
-
-
-
-				//Claimant Telephone
-
-
-				label(for="txtClaimantTelephone") Claimant Telephone
-				input(id="txtClaimantTelephone", name="foo", type="tel",  placeholder="Enter Text",  class="form-text mandatory")
-				p(class="form-help error")
-
-
-
-				//Claimant Email Address
-
-
-				label(for="txtClaimantEmail") Claimant Email Address
-				input(id="txtClaimantEmail", name="myFormData", type="email",  placeholder="Enter Text",  class="form-text mandatory")
-				p(class="form-help error")
-
-
-
-				//Claimant HB Reference
-
-
-				label(for="txtClaimantHBReference") Claimant HB Reference
-				input(id="txtClaimantHBReference", name="myFormData", type="text",  placeholder="Enter Text",  class="form-text mandatory")
-				p(class="form-help error")
-
-
-
-				//Claimant National Insurance Number
-
-
-				label(for="txtClaimantNationalInsuranceNumber") Claimant National Insurance Number
-				input(id="txtClaimantNationalInsuranceNumber", name="myFormData", type="text",  placeholder="Enter Text",  class="form-text mandatory")
-				p(class="form-help error")
-
-
-				//Are you the Landlord/Agent?
-				label(for="txtLandlordAgent") Are you the Landlord/Agent?
-				select(id="txtLandlordAgent",  class="form-select   mandatory")
-					option(value="") Select
-					option(value="yes") Yes
-					option(value="no") No
-				p(class="form-help error")
-
-				div(id="agent-landlord-dependent")
-					//Agent/Landlord Name
-					label(for="txtLandlordAgentName") Agent/Landlord Name 
-					input(id="txtLandlordAgentName", type="text",  name="myFormData", placeholder="Enter Text",  class="form-text mandatory conditional-dependent")
+					label(for="txtClaimantName") Claimant Name
+					input(id="txtClaimantName", name="txtClaimantName", type="text",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
+					//Claimant Address
 
-					//Agent/Landlord Address
-					label(for="txtLandlordAgentAddress") Agent/Landlord Address 
-					input(id="txtLandlordAgentAddress", type="text", name="myFormData",  placeholder="Enter Text",  class="form-text mandatory")
-					p(class="form-help error")
 
-					//Agent/Landlord Email Address
-					label(for="txtLandlordAgentEmailAddress") Agent/Landlord Email Address 
-					input(id="txtLandlordAgentEmailAddress", type="email", name="myFormData",  placeholder="Enter Text",  class="form-text mandatory")
-					p(class="form-help error")
-
-					//Agent/Landlord Telephone
-					label(for="txtLandlordAgentTelephone") Agent/Landlord Telephone
-					input(id="txtLandlordAgentTelephone", type="tel", name="myFormData",  placeholder="Enter Text",  class="form-text mandatory")
+					label(for="txtClaimantAddress") Claimant Address
+					input(id="txtClaimantAddress", name="txtClaimantAddress", type="text",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
 
 
 
+					//Claimant Telephone
 
-				//Nature of Request
-				label(for="selectNatureRequest") Nature of Request
-				select(id="selectNatureRequest",  class="form-select conditional-fieldset-select mandatory")
-					option(value="") Choose
-					option(value="change-of-address") Change of Address 
-					option(value="change-of-income") Change of Income 
-					option(value="change-of-household") Change of Household 
-					option(value="change-of-rent") Change of Rent
-					option(value="other-change") Other Change
-				p(class="form-help error")
 
-			fieldset(id="change-of-address", class="conditional")
-				h2 Change of Address
-
-				//When did the move take place?
-				label(for="txtWhenMoveTakePlace") When did the move take place?
-				input(id="txtWhenMoveTakePlace",type="date", name="myFormData",  placeholder="",  class="form-text mandatory ")
-				p(class="form-help error")
+					label(for="txtClaimantTelephone") Claimant Telephone
+					input(id="txtClaimantTelephone", name="txtClaimantTelephone", type="tel",  placeholder="Enter Text",  class="form-text mandatory")
+					p(class="form-help error")
 
 
 
-				//When did the tenancy start?
-				label(for="txtWhenDidTenancyStart") When did the tenancy start?
-				input(id="txtWhenDidTenancyStart", type="date", name="myFormData",  placeholder="",  class="form-text mandatory")
-				p(class="form-help error")
+					//Claimant Email Address
+
+
+					label(for="txtClaimantEmail") Claimant Email Address
+					input(id="txtClaimantEmail", name="txtClaimantEmail", type="email",  placeholder="Enter Text",  class="form-text mandatory")
+					p(class="form-help error")
 
 
 
-				//What is the new rental amount?
-				label(for="txtWhatNewRentalAmount") What is the new rental amount?
-				input(id="txtWhatNewRentalAmount", type="number", name="myFormData",  placeholder="Enter Text",  class="form-text mandatory")
-				p(class="form-help error")
+					//Claimant HB Reference
+
+
+					label(for="txtClaimantHBReference") Claimant HB Reference
+					input(id="txtClaimantHBReference", name="txtClaimantHBReference", type="text",  placeholder="Enter Text",  class="form-text mandatory")
+					p(class="form-help error")
 
 
 
-				//Total number of bedrooms?
-				label(for="txtTotalNumberBedroom") Total number of bedrooms?
-				input(id="txtTotalNumberBedroom", type="number",  placeholder="Enter Text",  class="form-text mandatory")
-				p(class="form-help error")
+					//Claimant National Insurance Number
+
+
+					label(for="txtClaimantNationalInsuranceNumber") Claimant National Insurance Number
+					input(id="txtClaimantNationalInsuranceNumber", name="txtClaimantNationalInsuranceNumber", type="text",  placeholder="Enter Text",  class="form-text mandatory")
+					p(class="form-help error")
+
+
+					//Are you the Landlord/Agent?
+					label(for="selectLandlordAgent") Are you the Landlord/Agent?
+					select(id="selectLandlordAgent", name="selectLandlordAgent",  class="form-select   mandatory")
+						option(value="") Select
+						option(value="yes") Yes
+						option(value="no") No
+					p(class="form-help error")
+
+					div(id="agent-landlord-dependent")
+						//Agent/Landlord Name
+						label(for="txtLandlordAgentName") Agent/Landlord Name 
+						input(id="txtLandlordAgentName", type="text",  name="txtLandlordAgentName", placeholder="Enter Text",  class="form-text mandatory conditional-dependent")
+						p(class="form-help error")
+
+						//Agent/Landlord Address
+						label(for="txtLandlordAgentAddress") Agent/Landlord Address 
+						input(id="txtLandlordAgentAddress", type="text", name="txtLandlordAgentAddress",  placeholder="Enter Text",  class="form-text mandatory")
+						p(class="form-help error")
+
+						//Agent/Landlord Email Address
+						label(for="txtLandlordAgentEmailAddress") Agent/Landlord Email Address 
+						input(id="txtLandlordAgentEmailAddress", type="email", name="txtLandlordAgentEmailAddress",  placeholder="Enter Text",  class="form-text mandatory")
+						p(class="form-help error")
+
+						//Agent/Landlord Telephone
+						label(for="txtLandlordAgentTelephone") Agent/Landlord Telephone
+						input(id="txtLandlordAgentTelephone", type="tel", name="txtLandlordAgentTelephone",  placeholder="Enter Text",  class="form-text mandatory")
+						p(class="form-help error")
 
 
 
-				//Any additional information?
-				label(for="txtAnyAdditionalInformation") Any additional information?
-				textarea(id="txtAnyAdditionalInformation", name="myFormData",  placeholder="Enter Text",  class="form-text")
+
+					//Nature of Request
+					label(for="selectNatureRequest") Nature of Request
+					select(id="selectNatureRequest",  name="selectNatureRequest", class="form-select conditional-fieldset-select mandatory")
+						option(value="") Choose
+						option(value="change-of-address") Change of Address 
+						option(value="change-of-income") Change of Income 
+						option(value="change-of-household") Change of Household 
+						option(value="change-of-rent") Change of Rent
+						option(value="other-change") Other Change
+					p(class="form-help error")
+
+				fieldset(id="change-of-address", class="conditional")
+					h2 Change of Address
+
+					//When did the move take place?
+					label(for="txtWhenMoveTakePlace") When did the move take place?
+					input(id="txtWhenMoveTakePlace",type="date", name="txtWhenMoveTakePlace",  placeholder="",  class="form-text mandatory ")
+					p(class="form-help error")
 
 
 
-			fieldset(id="change-of-income", class="conditional")
-				h2 Change of Income
-
-				//What is the change?
-				label(for="txtIncomeChange") What is the change?
-				select(id="txtIncomeChange", name="myFormData",  class="form-select mandatory")
-					option(value="") Choose
-					option(value="started-work") Started Work
-					option(value="finished-work") Finished Work
-					option(value="claiming-benefits") Claiming Benefits
-				p(class="form-help error")
-
-				//Who does it relate to?
-				label(for="txtIncomeWhoRelateTo") Who does it relate to?
-				select(id="txtIncomeWhoRelateTo", name="myFormData",  class="form-select mandatory")
-					option(value="") Choose
-					option(value="claimant") Claimant
-					option(value="partner") Partner 
-					option(value="other") Other
-				p(class="form-help error")
-
-				//When did the change take place?
-				label(for="txtIncomeWhenChangeTakePlace") When did the change take place?
-				input(id="txtIncomeWhenChangeTakePlace", type="date", name="myFormData",  placeholder="",  class="form-text mandatory")
-				p(class="form-help error")
-
-				//Name of the employer
-				label(for="txtIncomeNameExployer") Name of the employer?
-				input(id="txtIncomeNameExployer",  type="text",name="myFormData",   placeholder="Enter Text",  class="form-text mandatory")
-				p(class="form-help error")
-
-				//Number of hours worked 
-				label(for="txtIncomeNumberHoursWorked") Number of hours worked?
-				input(id="txtIncomeNumberHoursWorked",  type="number", name="myFormData",  placeholder="Enter Text",  class="form-text mandatory")
-				p(class="form-help error")
-
-				//Start date
-				label(for="txtIncomeStartDate") Start date?
-				input(id="txtIncomeStartDate ",  type="date", name="myFormData",  placeholder="",  class="form-text mandatory")
-				p(class="form-help error")
-
-				//Finish Date 
-				label(for="txtIncomeFinishDate") Finish Date?
-				input(id="txtIncomeFinishDate",  type="date", name="myFormData",  placeholder="",  class="form-text mandatory")
-				p(class="form-help error")
-
-				//Current source of income?
-				label(for="txtIncomeCurrentSource") Current source of income?
-				input(id="txtIncomeCurrentSource",  type="text", name="myFormData",  placeholder="Enter Text",  class="form-text mandatory")
-				p(class="form-help error")
-
-				//Claim Date
-				label(for="txtIncomeClaimDate") Claim Date?
-				input(id="txtIncomeClaimDate",  type="date",  placeholder="",  class="form-text mandatory")
-				p(class="form-help error")
-
-				//More information
-				label(for="txtIncomeMoreInfo") More information
-				textarea(id="txtIncomeMoreInfo",  placeholder="Enter Text",  class="form-text")
+					//When did the tenancy start?
+					label(for="txtWhenDidTenancyStart") When did the tenancy start?
+					input(id="txtWhenDidTenancyStart", type="date", name="txtWhenDidTenancyStart",  placeholder="",  class="form-text mandatory")
+					p(class="form-help error")
 
 
-			fieldset(id="change-of-household", class="conditional")
-				h2 Change of Household
 
-				//Type of Change
-				label(for="txtChangeHouseholdTypeChange") Type of Change
-				select(id="txtChangeHouseholdTypeChange",  class="form-select mandatory")
-					option(value="") Choose
-					option(value="claimant") Claimant
-					option(value="partner") Partner 
-					option(value="other") Other
-				p(class="form-help error")
+					//What is the new rental amount?
+					label(for="txtWhatNewRentalAmount") What is the new rental amount?
+					input(id="txtWhatNewRentalAmount", type="number", name="txtWhatNewRentalAmount",  placeholder="Enter Text",  class="form-text mandatory")
+					p(class="form-help error")
 
-				//Name(s) of person moving
-				label(for="txtChangeHouseholdNamePersonMoving") Name(s) of person moving
-				input(id="txtChangeHouseholdNamePersonMoving",  type="",  placeholder="Enter Text",  class="form-text mandatory")
-				p(class="form-help error")
 
-				//Date Change occurred 
-				label(for="txtChangeHouseholdDateChangeOccurred") Date Change occurred 
-				input(id="txtChangeHouseholdDateChangeOccurred",  type="date",  placeholder="Enter Text",  class="form-text mandatory")
-				p(class="form-help error")
 
-				//Income
-				label(for="txtChangeHouseholdIncome") Income
-				input(id="txtChangeHouseholdIncome",  type="",  placeholder="Enter Text",  class="form-text mandatory")
-				p(class="form-help error")
+					//Total number of bedrooms?
+					label(for="txtTotalNumberBedroom") Total number of bedrooms?
+					input(id="txtTotalNumberBedroom", name="txtTotalNumberBedroom",type="number",  placeholder="Enter Text",  class="form-text mandatory")
+					p(class="form-help error")
 
-				//Where they come from
-				label(for="txtChangeHouseholdWhereComeFrom") Where they come from
-				input(id="txtChangeHouseholdWhereComeFrom",  type="",  placeholder="Enter Text",  class="form-text mandatory")
-				p(class="form-help error")
 
-				//If Child please enter dob 
-				label(for="txtChangeHouseholdChildEnterDob") If Child please enter dob 
-				input(id="txtChangeHouseholdChildEnterDob",  type="date",  placeholder="",  class="form-text mandatory")
-				p(class="form-help error")
 
-				//More information
-				label(for="txtChangeHouseholdMoreInformation") More information
-				textarea(id="txtChangeHouseholdMoreInformation",  placeholder="Enter Text",  class="form-text")
+					//Any additional information?
+					label(for="txtAnyAdditionalInformation") Any additional information?
+					textarea(id="txtAnyAdditionalInformation", name="txtAnyAdditionalInformation",  placeholder="Enter Text",  class="form-text")
 
-			fieldset(id="change-of-rent", class="conditional")
-				h2 Change of Rent
 
-				//Date of Change
-				label(for="txtChangeRentDateChange") Date of Change
-				input(id="txtChangeRentDateChange",  type="date",  placeholder="",  class="form-text mandatory")
-				p(class="form-help error")
 
-				//Amount of new rent
-				label(for="txtChangeRentAmountNewRent") Amount of new rent
-				input(id="txtChangeRentAmountNewRent",  type="",  placeholder="Enter Text",  class="form-text mandatory")
-				p(class="form-help error")
+				fieldset(id="change-of-income", class="conditional")
+					h2 Change of Income
 
-				//More information
-				label(for="txtChangeRentMoreInformation") More information
-				textarea(id="txtChangeRentMoreInformation",  placeholder="Enter Text",  class="form-text")
-				p(class="form-help error")
+					//What is the change?
+					label(for="txtIncomeChange") What is the change?
+					select(id="txtIncomeChange", name="txtIncomeChange",  class="form-select mandatory")
+						option(value="") Choose
+						option(value="started-work") Started Work
+						option(value="finished-work") Finished Work
+						option(value="claiming-benefits") Claiming Benefits
+					p(class="form-help error")
 
-			fieldset(id="other-change", class="conditional")
-				h2 Other Change
-				//More information
-				label(for="txtOtherChangeMoreInformation") More information
-				textarea(id="txtOtherChangeMoreInformation",  placeholder="Enter Text",  class="form-text mandatory")
-				p(class="form-help error")
+					//Who does it relate to?
+					label(for="txtIncomeWhoRelateTo") Who does it relate to?
+					select(id="txtIncomeWhoRelateTo", name="txtIncomeWhoRelateTo",  class="form-select mandatory")
+						option(value="") Choose
+						option(value="claimant") Claimant
+						option(value="partner") Partner 
+						option(value="other") Other
+					p(class="form-help error")
 
-			fieldset(id="files-upload")
-				p(class="form-help error")
-				p(class="form-help response", style="color:black;")
-				input(id="myFiles",type="file" multiple)
-				//- button(id="addFileUpload", type="button") Add one
-				ul(id="image-list")
+					//When did the change take place?
+					label(for="txtIncomeWhenChangeTakePlace") When did the change take place?
+					input(id="txtIncomeWhenChangeTakePlace", type="date", name="txtIncomeWhenChangeTakePlace",  placeholder="",  class="form-text mandatory")
+					p(class="form-help error")
 
-			input(id="submitForm", type="submit",  text="Submit") 
-include ../includes/footer.html
+					//Name of the employer
+					label(for="txtIncomeNameExployer") Name of the employer?
+					input(id="txtIncomeNameExployer",  type="text",name="txtIncomeNameExployer",   placeholder="Enter Text",  class="form-text mandatory")
+					p(class="form-help error")
+
+					//Number of hours worked 
+					label(for="txtIncomeNumberHoursWorked") Number of hours worked?
+					input(id="txtIncomeNumberHoursWorked",  type="number", name="txtIncomeNumberHoursWorked",  placeholder="Enter Text",  class="form-text mandatory")
+					p(class="form-help error")
+
+					//Start date
+					label(for="txtIncomeStartDate") Start date?
+					input(id="txtIncomeStartDate ",  type="date", name="txtIncomeStartDate",  placeholder="",  class="form-text mandatory")
+					p(class="form-help error")
+
+					//Finish Date 
+					label(for="txtIncomeFinishDate") Finish Date?
+					input(id="txtIncomeFinishDate",  type="date", name="txtIncomeFinishDate",  placeholder="",  class="form-text mandatory")
+					p(class="form-help error")
+
+					//Current source of income?
+					label(for="txtIncomeCurrentSource") Current source of income?
+					input(id="txtIncomeCurrentSource",  type="text", name="txtIncomeCurrentSource",  placeholder="Enter Text",  class="form-text mandatory")
+					p(class="form-help error")
+
+					//Claim Date
+					label(for="txtIncomeClaimDate") Claim Date?
+					input(id="txtIncomeClaimDate",  name="txtIncomeClaimDate",type="date",  placeholder="",  class="form-text mandatory")
+					p(class="form-help error")
+
+					//More information
+					label(for="txtIncomeMoreInfo") More information
+					textarea(id="txtIncomeMoreInfo", name="txtIncomeMoreInfo",  placeholder="Enter Text",  class="form-text")
+
+
+				fieldset(id="change-of-household", class="conditional")
+					h2 Change of Household
+
+					//Type of Change
+					label(for="txtChangeHouseholdTypeChange") Type of Change
+					select(id="txtChangeHouseholdTypeChange", name="txtChangeHouseholdTypeChange", class="form-select mandatory")
+						option(value="") Choose
+						option(value="claimant") Claimant
+						option(value="partner") Partner 
+						option(value="other") Other
+					p(class="form-help error")
+
+					//Name(s) of person moving
+					label(for="txtChangeHouseholdNamePersonMoving") Name(s) of person moving
+					input(id="txtChangeHouseholdNamePersonMoving", name="txtChangeHouseholdNamePersonMoving", type="text",  placeholder="Enter Text",  class="form-text mandatory")
+					p(class="form-help error")
+
+					//Date Change occurred 
+					label(for="txtChangeHouseholdDateChangeOccurred") Date Change occurred 
+					input(id="txtChangeHouseholdDateChangeOccurred",name="txtChangeHouseholdDateChangeOccurred",  type="date",  placeholder="Enter Text",  class="form-text mandatory")
+					p(class="form-help error")
+
+					//Income
+					label(for="txtChangeHouseholdIncome") Income
+					input(id="txtChangeHouseholdIncome",  type="number",  placeholder="Enter Text",  class="form-text mandatory")
+					p(class="form-help error")
+
+					//Where they come from
+					label(for="txtChangeHouseholdWhereComeFrom") Where they come from
+					input(id="txtChangeHouseholdWhereComeFrom",  name="txtChangeHouseholdIncome",type="text",  placeholder="Enter Text",  class="form-text mandatory")
+					p(class="form-help error")
+
+					//If Child please enter dob 
+					label(for="txtChangeHouseholdChildEnterDob") If Child please enter dob 
+					input(id="txtChangeHouseholdChildEnterDob",name="txtChangeHouseholdIncome",  type="date",  placeholder="",  class="form-text mandatory")
+					p(class="form-help error")
+
+					//More information
+					label(for="txtChangeHouseholdMoreInformation") More information
+					textarea(id="txtChangeHouseholdMoreInformation",name="txtChangeHouseholdMoreInformation",  placeholder="Enter Text",  class="form-text")
+
+				fieldset(id="change-of-rent", class="conditional")
+					h2 Change of Rent
+
+					//Date of Change
+					label(for="txtChangeRentDateChange") Date of Change
+					input(id="txtChangeRentDateChange", name="txtChangeRentDateChange", type="date",  placeholder="",  class="form-text mandatory")
+					p(class="form-help error")
+
+					//Amount of new rent
+					label(for="txtChangeRentAmountNewRent") Amount of new rent
+					input(id="txtChangeRentAmountNewRent", name="txtChangeRentAmountNewRent", type="number",  placeholder="Enter Text",  class="form-text mandatory")
+					p(class="form-help error")
+
+					//More information
+					label(for="txtChangeRentMoreInformation") More information
+					textarea(id="txtChangeRentMoreInformation", name="txtChangeRentMoreInformation", placeholder="Enter Text",  class="form-text")
+					p(class="form-help error")
+
+				fieldset(id="other-change", class="conditional")
+					h2 Other Change
+					//More information
+					label(for="txtOtherChangeMoreInformation") More information
+					textarea(id="txtOtherChangeMoreInformation", name="txtOtherChangeMoreInformation", placeholder="Enter Text",  class="form-text mandatory")
+					p(class="form-help error")
+
+				fieldset(id="files-upload")
+					p(class="form-help error")
+					p(class="form-help response", style="color:black;")
+					input(id="myFiles",type="file" multiple)
+					//- button(id="addFileUpload", type="button") Add one
+					ul(id="image-list")
+
+				input(id="submitForm", type="submit",  text="Submit") 
+				include ../includes/footer.html

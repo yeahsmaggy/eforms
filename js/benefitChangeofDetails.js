@@ -1,5 +1,5 @@
 var MyEForms = function() {
-    this.widget = 'widget';
+    // this.widget = 'widget';
     this.body_element = $('body');
 };
 
@@ -15,7 +15,7 @@ MyEForms.prototype = {
         return pattern.test(email_address);
     },
     validateEmpty: function(input_name, input_value) {
-         if (input_value.length) {
+        if (input_value.length) {
             return true;
         }
 
@@ -102,7 +102,7 @@ MyEForms.prototype = {
 
         var valid_empty = this.validateEmpty(this_label_text, $(el).val());
         //if class mandatory
-        if (!$(el).is('select') &&  !valid_empty) {
+        if (!$(el).is('select') && !valid_empty) {
             error += 'Please enter a value.';
             //error += 'This field cannot be empty.';
             //error += this_label_text + ' . This field cannot be empty.';
@@ -136,7 +136,11 @@ MyEForms.prototype = {
         if ($(el).attr('type') !== 'button') {
 
             if (typeof disabled !== 'undefined') {
-                $(el).prop('disabled', disabled);
+                if (disabled === true) {
+                    $(el).prop('disabled', 'disabled');
+                } else {
+                    $(el).removeAttr('disabled');
+                }
             }
             if (typeof required !== 'undefined') {
                 $(el).prop('required', required);
@@ -177,6 +181,7 @@ jQuery(document).ready(function($) {
     */
 
     var instance_of_myeforms = new MyEForms();
+
     var body_element = instance_of_myeforms.body_element;
     var inputs = body_element.find('input');
     var agent_landlord_dependent = $('#agent-landlord-dependent');
@@ -187,13 +192,14 @@ jQuery(document).ready(function($) {
     var fieldsets = $('fieldset');
     var conditional_fieldsets = $('fieldset.conditional');
     var error_checking_obj = {};
-    //onload disable & hide all of the conditional fieldsets
+
+    //onload disable & hide all of the conditional fieldsets children
     conditional_fieldsets.children().each(function(index, el) {
         instance_of_myeforms.enabledRequired($(el), true, false);
     });
     body_element.find('fieldset.conditional').hide();
 
-    //disable & hide dependents of agent/landlord select
+    //disable & hide children of agent/landlord select
     agent_landlord_dependent_children.filter(function(_index, e) {
         instance_of_myeforms.enabledRequired($(e), true, false);
     });
@@ -228,39 +234,84 @@ jQuery(document).ready(function($) {
     $(".mandatory").prev().append('*');
 
     //validate when input changes
-    $('body input, body select').on('change', function(){
+    $('input, textarea, select', 'body #content').on('change', function() {
+        if ($(this).is(':enabled')) {
+            error_checking_obj = {};
+
             var error = instance_of_myeforms.validateAll(this);
             check_for_error(error, $(this));
+        }
     });
 
 
-    function check_for_error(error, element){
-            var this_id = $(element).attr('id');
 
-            if (error.length) {
-                $(element).next('.error').text(error);
-                error_checking_obj[this_id]=1;
-                console.log(error_checking_obj);
-                // return;
-            } else {
-                $(element).next('.error').text('');
-                error_checking_obj[this_id]=0;
-                console.log(error_checking_obj);
+    function check_for_error(error, element) {
+        //pass in jquery object
 
-            }
+        var this_id = element.attr('id');
+
+        if (error.length) {
+            $(element).next('.error').text(error);
+            error_checking_obj[this_id] = 1;
+            // return;
+        } else {
+            $(element).next('.error').text('');
+            delete error_checking_obj[this_id];
+        }
     }
+
 
 
     $('#submitForm').on('click', function(event) {
         event.preventDefault();
         //validate
-        fieldsets.find('input:enabled, textarea, select').each(function(index, el) {
-            var error = instance_of_myeforms.validateAll($(el));
-            check_for_error(error, $(el));
+        error_checking_obj = {};
+
+        $('input, textarea, select', 'body #content').each(function(index, el) {
+            // console.log($(this).is(':disabled'));
+            if ($(this).is(':enabled')) {
+                //if this enabled / visible, then do...
+                //because using body selector will only attach this event to whatever is initially visible / enabled
+                //we want the event to be attached to all then we can check visibility/  status in logic
+                var error = instance_of_myeforms.validateAll($(el));
+                check_for_error(error, $(el));
+            }
+
         });
 
+        //remote the reference to the submit button and the file upload as we arent usign that at the moment
+        delete error_checking_obj['submitForm'];
+        delete error_checking_obj['myFiles'];
 
-        //$('body').text(JSON.stringify($('form').serializeArray()));
+        // console.log(error_checking_obj);
+
+        if ($.isEmptyObject(error_checking_obj)) {
+
+            //$('body').text(JSON.stringify($('form').serializeArray()));
+
+            var form_data = $('form#myForm').serializeArray();
+
+            $.ajax({
+                type: "POST",
+                url: "BenefitChangeofDetailsPdf",
+                data: form_data,
+                success: function(res) {
+                    console.log('success');
+                    console.log(res);
+                },
+                failure: function(res) {
+                    console.log('failure');
+                    console.log(res);
+                },
+                dataType: "JSON"
+            });
+
+        };
+
+
+
+
+
     });
 
     //conditional based on select value matching id of fieldset
@@ -275,10 +326,8 @@ jQuery(document).ready(function($) {
             var $this_fieldset = $(e);
             var $self_children = $(this).children();
             if (select_val === $this_fieldset.attr('id')) {
-                console.log(select_val);
                 //and show that fieldset, enable all fields
                 $self_children.each(function(index, el) {
-                    console.log(el);
                     instance_of_myeforms.enabledRequired($(el), false);
                 });
                 body_element.find('fieldset#' + select_val).show();
@@ -307,10 +356,10 @@ jQuery(document).ready(function($) {
             agent_landlord_dependent.show();
         } else {
             agent_landlord_dependent_children.filter(function(_index, e) {
-                //instance_of_myeforms.enabledRequired($(e), true, false);
+                instance_of_myeforms.enabledRequired($(e), true, false);
             });
             agent_landlord_dependent.hide();
-            $('.error', $('#agent-landlord-dependent')).text('');
+            // $('.error', $('#agent-landlord-dependent')).text('');
         }
     });
 
