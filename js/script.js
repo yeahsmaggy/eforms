@@ -186,9 +186,9 @@ jQuery(document).ready(function($) {
     var change_of_address = $('#change-of-address');
     var fieldsets = $('fieldset');
     var conditional_fieldsets = $('fieldset.conditional');
-
+    var error_checking_obj = {};
     //onload disable & hide all of the conditional fieldsets
-    conditional_fieldsets.each(function(index, el) {
+    conditional_fieldsets.children().each(function(index, el) {
         instance_of_myeforms.enabledRequired($(el), true, false);
     });
     body_element.find('fieldset.conditional').hide();
@@ -229,36 +229,36 @@ jQuery(document).ready(function($) {
 
     //validate when input changes
     $('body input, body select').on('change', function(){
-
             var error = instance_of_myeforms.validateAll(this);
+            check_for_error(error, $(this));
+    });
+
+
+    function check_for_error(error, element){
+            var this_id = $(element).attr('id');
 
             if (error.length) {
-                $(this).next('.error').text(error);
-                return;
+                $(element).next('.error').text(error);
+                error_checking_obj[this_id]=1;
+                console.log(error_checking_obj);
+                // return;
             } else {
-                $(this).next('.error').text('');
-            }
+                $(element).next('.error').text('');
+                error_checking_obj[this_id]=0;
+                console.log(error_checking_obj);
 
-    });
+            }
+    }
 
 
     $('#submitForm').on('click', function(event) {
         event.preventDefault();
         //validate
         fieldsets.find('input:enabled, textarea, select').each(function(index, el) {
-
             var error = instance_of_myeforms.validateAll($(el));
-
-            if (error.length) {
-                $(el).next('.error').text(error);
-                return;
-            } else {
-                $(el).next('.error').text('');
-            }
-
-            // console.log(error);
+            check_for_error(error, $(el));
         });
-        // console.log('still error' + still_an_error);
+
 
         //$('body').text(JSON.stringify($('form').serializeArray()));
     });
@@ -272,17 +272,20 @@ jQuery(document).ready(function($) {
         //check if the fieldset has the selected val id
         $(conditional_fieldsets).filter(function(_index, e) {
             var self = $(this);
-            var self_children = $(this).children();
-            if (select_val === $(e).attr('id')) {
+            var $this_fieldset = $(e);
+            var $self_children = $(this).children();
+            if (select_val === $this_fieldset.attr('id')) {
+                console.log(select_val);
                 //and show that fieldset, enable all fields
-                self_children.each(function(index, el) {
-                    instance_of_myeforms.enabledRequired($(e), false);
+                $self_children.each(function(index, el) {
+                    console.log(el);
+                    instance_of_myeforms.enabledRequired($(el), false);
                 });
                 body_element.find('fieldset#' + select_val).show();
             } else {
                 //hide and disable all the others
-                self_children.each(function(index, el) {
-                    instance_of_myeforms.enabledRequired($(e), true);
+                $self_children.each(function(index, el) {
+                    instance_of_myeforms.enabledRequired($(el), true);
                     //reset error messages on hidden fields
                     $('.error', self).text('');
                 });
