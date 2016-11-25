@@ -154,30 +154,17 @@ jQuery(document).ready(function($) {
 
     /* -- form elements --
     some are mandatory (can't be empty)
-    txtClaimantName
-    txtClaimantAddress
-    txtClaimantTelephone
-    txtClaimantEmail
-    txtClaimantHBReference
-    txtClaimantNationalInsuranceNumber
-    txtLandlordAgentName
-    txtLandlordAgentAddress
-    txtLandlordAgentEmailAddress
-    txtLandlordAgentTelephone
-    txtLandlordAgent
     */
 
     /* -- validation --
     validate email address
     validate telephone number
-    date picker
+    date picker etc
     */
 
     /* -- conditionals
     Nature of request result in other forms being conditionally show
     any fields not shown need to be invalidated on submit e.g. prop=disabled 
-
-    - select all the relevant DOM form elements
     */
 
     var instance_of_myeforms = new MyEForms();
@@ -186,7 +173,7 @@ jQuery(document).ready(function($) {
     var inputs = body_element.find('input');
     var agent_landlord_dependent = $('#agent-landlord-dependent');
     var agent_landlord_dependent_children = agent_landlord_dependent.children();
-    var landlord_agent_select = $('#txtLandlordAgent');
+    var landlord_agent_select = $('#selectLandlordAgent');
     var claimant_info = $('#claimant-info');
     var change_of_address = $('#change-of-address');
     var fieldsets = $('fieldset');
@@ -205,6 +192,14 @@ jQuery(document).ready(function($) {
     });
     agent_landlord_dependent.hide();
 
+
+    //test the form
+    // $('input[type=text]').val('a');
+    // $('input[type=email]').val('a@a.com');
+    // $('input[type=tel]').val('01858535312');
+    // $('input[type=date]').val('01-10-1982');
+    // $('#selectLandlordAgent').val('no');
+    // $('#selectNatureRequest').val('change-of-address');
 
 
     //only allow numbers in number inputs
@@ -283,13 +278,38 @@ jQuery(document).ready(function($) {
         delete error_checking_obj['submitForm'];
         delete error_checking_obj['myFiles'];
 
-        // console.log(error_checking_obj);
 
         if ($.isEmptyObject(error_checking_obj)) {
 
-            //$('body').text(JSON.stringify($('form').serializeArray()));
-
             var form_data = $('form#myForm').serializeArray();
+
+            var enabled_dates = [];
+
+            //get the enabled dates ids and values in an array
+            $('input[type=date]:enabled').each(function(index, el) {
+                enabled_dates.push($(el).attr('id'));
+            });
+
+            //for each in the form_data array
+            //
+            $(form_data).each(function(index, el) {
+
+                //if the form_data el is in the enabled dates array
+                if (($.inArray($(el).prop("name"), enabled_dates)) !== -1) {
+
+                    //create a new date from it in the right format
+                    var formatted_date = new Date($(el)[0].value);
+                    formatted_date = $.datepicker.formatDate('dd/mm/yy', formatted_date);
+
+                    //replace the value
+                    $(el)[0].value = formatted_date;
+                };
+
+
+            });
+
+            // console.log(JSON.stringify(form_data));
+
 
             $.ajax({
                 type: "POST",
@@ -307,9 +327,6 @@ jQuery(document).ready(function($) {
             });
 
         };
-
-
-
 
 
     });

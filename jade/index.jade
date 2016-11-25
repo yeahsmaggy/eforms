@@ -17,57 +17,54 @@ html(lang="en")
 			form(id="myForm",enctype="multipart/form-data", action="upload.php")
 				fieldset(id="claimant-info")
 					//Claimant Name
-
-
 					label(for="txtClaimantName") Claimant Name
+					input(id="labelClaimantName" name="labelClaimantName" type="hidden" value="Claimant Name")
 					input(id="txtClaimantName", name="txtClaimantName", type="text",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
+
+						
 					//Claimant Address
-
-
 					label(for="txtClaimantAddress") Claimant Address
+					input(id="labelClaimantAddress" name="labelClaimantAddress" type="hidden" value="Claimant Address")
 					input(id="txtClaimantAddress", name="txtClaimantAddress", type="text",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
 
 
 
 					//Claimant Telephone
-
-
 					label(for="txtClaimantTelephone") Claimant Telephone
+					input(id="labelClaimantTelephone" name="labelClaimantTelephone" type="hidden" value="Claimant Telephone")
 					input(id="txtClaimantTelephone", name="txtClaimantTelephone", type="tel",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
 
 
 
 					//Claimant Email Address
-
-
 					label(for="txtClaimantEmail") Claimant Email Address
+					input(id="labelClaimantEmail" name="labelClaimantEmail" type="hidden" value="Claimant Email Address")
 					input(id="txtClaimantEmail", name="txtClaimantEmail", type="email",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
 
 
 
 					//Claimant HB Reference
-
-
 					label(for="txtClaimantHBReference") Claimant HB Reference
-					input(id="txtClaimantHBReference", name="txtClaimantHBReference", type="text",  placeholder="Enter Text",  class="form-text mandatory")
+					input(id="labelClaimantHBReference" name="labelClaimantHBReference" type="hidden" value="Claimant HB Reference")
+					input(id="txtClaimantHBReference", maxlength="8", type="number", name="txtClaimantHBReference",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
 
 
 
 					//Claimant National Insurance Number
-
-
 					label(for="txtClaimantNationalInsuranceNumber") Claimant National Insurance Number
+					input(id="labelClaimantNationalInsuranceNumber" name="labelClaimantNationalInsuranceNumber" type="hidden" value="Claimant National Insurance Number")
 					input(id="txtClaimantNationalInsuranceNumber", name="txtClaimantNationalInsuranceNumber", type="text",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
 
 
 					//Are you the Landlord/Agent?
 					label(for="selectLandlordAgent") Are you the Landlord/Agent?
+					input(id="labelselectLandlordAgent" name="labelselectLandlordAgent" type="hidden" value="Are you the Landlord/Agent?")
 					select(id="selectLandlordAgent", name="selectLandlordAgent",  class="form-select   mandatory")
 						option(value="") Select
 						option(value="yes") Yes
@@ -77,21 +74,25 @@ html(lang="en")
 					div(id="agent-landlord-dependent")
 						//Agent/Landlord Name
 						label(for="txtLandlordAgentName") Agent/Landlord Name 
+						input(id="labelLandlordAgentName" name="labelLandlordAgentName" type="hidden" value="Agent/Landlord Name ")
 						input(id="txtLandlordAgentName", type="text",  name="txtLandlordAgentName", placeholder="Enter Text",  class="form-text mandatory conditional-dependent")
 						p(class="form-help error")
 
 						//Agent/Landlord Address
 						label(for="txtLandlordAgentAddress") Agent/Landlord Address 
+						input(id="labelLandlordAgentAddress" name="labelLandlordAgentAddress" type="hidden" value="Agent/Landlord Address ")
 						input(id="txtLandlordAgentAddress", type="text", name="txtLandlordAgentAddress",  placeholder="Enter Text",  class="form-text mandatory")
 						p(class="form-help error")
 
 						//Agent/Landlord Email Address
 						label(for="txtLandlordAgentEmailAddress") Agent/Landlord Email Address 
+						input(id="labelLandlordAgentEmailAddress" name="labelLandlordAgentEmailAddress" type="hidden" value="Agent/Landlord Email Address ")
 						input(id="txtLandlordAgentEmailAddress", type="email", name="txtLandlordAgentEmailAddress",  placeholder="Enter Text",  class="form-text mandatory")
 						p(class="form-help error")
 
 						//Agent/Landlord Telephone
 						label(for="txtLandlordAgentTelephone") Agent/Landlord Telephone
+						input(id="labelLandlordAgentTelephone" name="labelLandlordAgentTelephone" type="hidden" value="Agent/Landlord Telephone")
 						input(id="txtLandlordAgentTelephone", type="tel", name="txtLandlordAgentTelephone",  placeholder="Enter Text",  class="form-text mandatory")
 						p(class="form-help error")
 
@@ -100,6 +101,7 @@ html(lang="en")
 
 					//Nature of Request
 					label(for="selectNatureRequest") Nature of Request
+					input(id="labelselectNatureRequest" name="labelselectNatureRequest" type="hidden" value="Nature of Request")
 					select(id="selectNatureRequest",  name="selectNatureRequest", class="form-select conditional-fieldset-select mandatory")
 						option(value="") Choose
 						option(value="change-of-address") Change of Address 
@@ -114,6 +116,7 @@ html(lang="en")
 
 					//When did the move take place?
 					label(for="txtWhenMoveTakePlace") When did the move take place?
+					input(id="labelWhenMoveTakePlace" name="labelWhenMoveTakePlace" type="hidden" value="When did the move take place?")
 					input(id="txtWhenMoveTakePlace",type="date", name="txtWhenMoveTakePlace",  placeholder="",  class="form-text mandatory ")
 					p(class="form-help error")
 
@@ -121,6 +124,7 @@ html(lang="en")
 
 					//When did the tenancy start?
 					label(for="txtWhenDidTenancyStart") When did the tenancy start?
+					input(id="labelWhenDidTenancyStart" name="labelWhenDidTenancyStart" type="hidden" value="When did the tenancy start?")
 					input(id="txtWhenDidTenancyStart", type="date", name="txtWhenDidTenancyStart",  placeholder="",  class="form-text mandatory")
 					p(class="form-help error")
 
@@ -128,6 +132,7 @@ html(lang="en")
 
 					//What is the new rental amount?
 					label(for="txtWhatNewRentalAmount") What is the new rental amount?
+					input(id="labelWhatNewRentalAmount" name="labelWhatNewRentalAmount" type="hidden" value="What is the new rental amount?")
 					input(id="txtWhatNewRentalAmount", type="number", name="txtWhatNewRentalAmount",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
 
@@ -135,6 +140,7 @@ html(lang="en")
 
 					//Total number of bedrooms?
 					label(for="txtTotalNumberBedroom") Total number of bedrooms?
+					input(id="labelTotalNumberBedroom" name="labelTotalNumberBedroom" type="hidden" value="Total number of bedrooms?")
 					input(id="txtTotalNumberBedroom", name="txtTotalNumberBedroom",type="number",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
 
@@ -142,110 +148,125 @@ html(lang="en")
 
 					//Any additional information?
 					label(for="txtAnyAdditionalInformation") Any additional information?
+					input(id="labelAnyAdditionalInformation" name="labelAnyAdditionalInformation" type="hidden" value="Any additional information?")
 					textarea(id="txtAnyAdditionalInformation", name="txtAnyAdditionalInformation",  placeholder="Enter Text",  class="form-text")
-
-
 
 				fieldset(id="change-of-income", class="conditional")
 					h2 Change of Income
 
 					//What is the change?
 					label(for="txtIncomeChange") What is the change?
+					input(id="labelIncomeChange" name="labelIncomeChange" type="hidden" value="What is the change?")
 					select(id="txtIncomeChange", name="txtIncomeChange",  class="form-select mandatory")
 						option(value="") Choose
-						option(value="started-work") Started Work
-						option(value="finished-work") Finished Work
-						option(value="claiming-benefits") Claiming Benefits
+						option(value="Started Work") Started Work
+						option(value="Finished Work") Finished Work
+						option(value="Claiming Benefits") Claiming Benefits
 					p(class="form-help error")
 
 					//Who does it relate to?
 					label(for="txtIncomeWhoRelateTo") Who does it relate to?
+					input(id="labelIncomeWhoRelateTo" name="labelIncomeWhoRelateTo" type="hidden" value="Who does it relate to?")
 					select(id="txtIncomeWhoRelateTo", name="txtIncomeWhoRelateTo",  class="form-select mandatory")
 						option(value="") Choose
-						option(value="claimant") Claimant
-						option(value="partner") Partner 
-						option(value="other") Other
+						option(value="Claimant") Claimant
+						option(value="Partner") Partner 
+						option(value="Other") Other
 					p(class="form-help error")
 
 					//When did the change take place?
 					label(for="txtIncomeWhenChangeTakePlace") When did the change take place?
+					input(id="labelIncomeWhenChangeTakePlace" name="labelIncomeWhenChangeTakePlace" type="hidden" value="When did the change take place?")
 					input(id="txtIncomeWhenChangeTakePlace", type="date", name="txtIncomeWhenChangeTakePlace",  placeholder="",  class="form-text mandatory")
 					p(class="form-help error")
 
 					//Name of the employer
 					label(for="txtIncomeNameExployer") Name of the employer?
+					input(id="labelIncomeNameExployer" name="labelIncomeNameExployer" type="hidden" value="Name of the employer?")
 					input(id="txtIncomeNameExployer",  type="text",name="txtIncomeNameExployer",   placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
 
 					//Number of hours worked 
 					label(for="txtIncomeNumberHoursWorked") Number of hours worked?
+					input(id="labelIncomeNumberHoursWorked" name="labelIncomeNumberHoursWorked" type="hidden" value="Number of hours worked?")
 					input(id="txtIncomeNumberHoursWorked",  type="number", name="txtIncomeNumberHoursWorked",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
 
 					//Start date
 					label(for="txtIncomeStartDate") Start date?
+					input(id="labelIncomeStartDate" name="labelIncomeStartDate" type="hidden" value="Start date?")
 					input(id="txtIncomeStartDate ",  type="date", name="txtIncomeStartDate",  placeholder="",  class="form-text mandatory")
 					p(class="form-help error")
 
 					//Finish Date 
 					label(for="txtIncomeFinishDate") Finish Date?
+					input(id="labelIncomeFinishDate" name="labelIncomeFinishDate" type="hidden" value="Finish Date?")
 					input(id="txtIncomeFinishDate",  type="date", name="txtIncomeFinishDate",  placeholder="",  class="form-text mandatory")
 					p(class="form-help error")
 
 					//Current source of income?
 					label(for="txtIncomeCurrentSource") Current source of income?
+					input(id="labelIncomeCurrentSource" name="labelIncomeCurrentSource" type="hidden" value="Current source of income?")
 					input(id="txtIncomeCurrentSource",  type="text", name="txtIncomeCurrentSource",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
 
 					//Claim Date
 					label(for="txtIncomeClaimDate") Claim Date?
+					input(id="labelIncomeClaimDate" name="labelIncomeClaimDate" type="hidden" value="Claim Date?")
 					input(id="txtIncomeClaimDate",  name="txtIncomeClaimDate",type="date",  placeholder="",  class="form-text mandatory")
 					p(class="form-help error")
 
 					//More information
 					label(for="txtIncomeMoreInfo") More information
+					input(id="labelIncomeMoreInfo" name="labelIncomeMoreInfo" type="hidden" value="More information")
 					textarea(id="txtIncomeMoreInfo", name="txtIncomeMoreInfo",  placeholder="Enter Text",  class="form-text")
-
 
 				fieldset(id="change-of-household", class="conditional")
 					h2 Change of Household
 
 					//Type of Change
 					label(for="txtChangeHouseholdTypeChange") Type of Change
+					input(id="labelChangeHouseholdTypeChange" name="labelChangeHouseholdTypeChange" type="hidden" value="Type of Change")
 					select(id="txtChangeHouseholdTypeChange", name="txtChangeHouseholdTypeChange", class="form-select mandatory")
 						option(value="") Choose
-						option(value="claimant") Claimant
-						option(value="partner") Partner 
-						option(value="other") Other
+						option(value="Claimant") Claimant
+						option(value="Partner") Partner 
+						option(value="Other") Other
 					p(class="form-help error")
 
 					//Name(s) of person moving
 					label(for="txtChangeHouseholdNamePersonMoving") Name(s) of person moving
+					input(id="labelChangeHouseholdNamePersonMoving" name="labelChangeHouseholdNamePersonMoving" type="hidden" value="Name(s) of person moving")
 					input(id="txtChangeHouseholdNamePersonMoving", name="txtChangeHouseholdNamePersonMoving", type="text",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
 
 					//Date Change occurred 
 					label(for="txtChangeHouseholdDateChangeOccurred") Date Change occurred 
+					input(id="labelChangeHouseholdDateChangeOccurred" name="labelChangeHouseholdDateChangeOccurred" type="hidden" value="Date Change occurred ")
 					input(id="txtChangeHouseholdDateChangeOccurred",name="txtChangeHouseholdDateChangeOccurred",  type="date",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
 
 					//Income
 					label(for="txtChangeHouseholdIncome") Income
-					input(id="txtChangeHouseholdIncome",  type="number",  placeholder="Enter Text",  class="form-text mandatory")
+					input(id="labelChangeHouseholdIncome" name="labelChangeHouseholdIncome" type="hidden" value="Income")
+					input(id="txtChangeHouseholdIncome", name="txtChangeHouseholdIncome", type="number",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
 
 					//Where they come from
 					label(for="txtChangeHouseholdWhereComeFrom") Where they come from
-					input(id="txtChangeHouseholdWhereComeFrom",  name="txtChangeHouseholdIncome",type="text",  placeholder="Enter Text",  class="form-text mandatory")
+					input(id="labelChangeHouseholdWhereComeFrom" name="labelChangeHouseholdWhereComeFrom" type="hidden" value="Where they come from")
+					input(id="txtChangeHouseholdWhereComeFrom",  name="txtChangeHouseholdWhereComeFrom",type="text",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
 
 					//If Child please enter dob 
 					label(for="txtChangeHouseholdChildEnterDob") If Child please enter dob 
-					input(id="txtChangeHouseholdChildEnterDob",name="txtChangeHouseholdIncome",  type="date",  placeholder="",  class="form-text mandatory")
+					input(id="labelChangeHouseholdChildEnterDob" name="labelChangeHouseholdChildEnterDob" type="hidden" value="If Child please enter dob ")
+					input(id="txtChangeHouseholdChildEnterDob",name="txtChangeHouseholdChildEnterDob",  type="date",  placeholder="",  class="form-text mandatory")
 					p(class="form-help error")
 
 					//More information
 					label(for="txtChangeHouseholdMoreInformation") More information
+					input(id="labelChangeHouseholdMoreInformation" name="labelChangeHouseholdMoreInformation" type="hidden" value="More information")
 					textarea(id="txtChangeHouseholdMoreInformation",name="txtChangeHouseholdMoreInformation",  placeholder="Enter Text",  class="form-text")
 
 				fieldset(id="change-of-rent", class="conditional")
@@ -253,16 +274,19 @@ html(lang="en")
 
 					//Date of Change
 					label(for="txtChangeRentDateChange") Date of Change
+					input(id="labelChangeRentDateChange" name="labelChangeRentDateChange" type="hidden" value="Date of Change")
 					input(id="txtChangeRentDateChange", name="txtChangeRentDateChange", type="date",  placeholder="",  class="form-text mandatory")
 					p(class="form-help error")
 
 					//Amount of new rent
 					label(for="txtChangeRentAmountNewRent") Amount of new rent
+					input(id="labelChangeRentAmountNewRent" name="labelChangeRentAmountNewRent" type="hidden" value="Amount of new rent")
 					input(id="txtChangeRentAmountNewRent", name="txtChangeRentAmountNewRent", type="number",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
 
 					//More information
 					label(for="txtChangeRentMoreInformation") More information
+					input(id="labelChangeRentMoreInformation" name="labelChangeRentMoreInformation" type="hidden" value="More information")
 					textarea(id="txtChangeRentMoreInformation", name="txtChangeRentMoreInformation", placeholder="Enter Text",  class="form-text")
 					p(class="form-help error")
 
@@ -270,6 +294,7 @@ html(lang="en")
 					h2 Other Change
 					//More information
 					label(for="txtOtherChangeMoreInformation") More information
+					input(id="labelOtherChangeMoreInformation" name="labelOtherChangeMoreInformation" type="hidden" value="More information")
 					textarea(id="txtOtherChangeMoreInformation", name="txtOtherChangeMoreInformation", placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
 
