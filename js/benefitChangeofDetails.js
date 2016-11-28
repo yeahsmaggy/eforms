@@ -102,30 +102,34 @@ MyEForms.prototype = {
 
         var valid_empty = this.validateEmpty(this_label_text, $(el).val());
         //if class mandatory
-        if (!$(el).is('select') && !valid_empty) {
-            error += 'Please enter a value.';
-            //error += 'This field cannot be empty.';
-            //error += this_label_text + ' . This field cannot be empty.';
-        }
 
-        if ($(el).attr('type') === 'email') {
-            var valid_email = this.validateEmail($(el).val());
-            if (!valid_email) {
-                error += ' Please enter a valid email address.';
+        if ($(el).hasClass('mandatory')) {
+            if (!$(el).is('select') && !valid_empty) {
+                error += 'Please enter a value.';
+                //error += 'This field cannot be empty.';
+                //error += this_label_text + ' . This field cannot be empty.';
             }
-        };
-        if ($(el).attr('type') === 'tel') {
-            var valid_telephone = this.validateTelephone($(el).val());
-            if (!valid_telephone) {
-                error += ' Please enter a valid telephone number.'
-            }
-        }
 
-        if ($(el).is('select')) {
-            if (!$(el).val().length) {
-                error += ' Please select an option.'
+            if ($(el).attr('type') === 'email') {
+                var valid_email = this.validateEmail($(el).val());
+                if (!valid_email) {
+                    error += ' Please enter a valid email address.';
+                }
             };
+            if ($(el).attr('type') === 'tel') {
+                var valid_telephone = this.validateTelephone($(el).val());
+                if (!valid_telephone) {
+                    error += ' Please enter a valid telephone number.'
+                }
+            }
+
+            if ($(el).is('select')) {
+                if (!$(el).val().length) {
+                    error += ' Please select an option.'
+                };
+            }
         }
+
         return error;
 
 
@@ -178,6 +182,13 @@ jQuery(document).ready(function($) {
     var change_of_address = $('#change-of-address');
     var fieldsets = $('fieldset');
     var conditional_fieldsets = $('fieldset.conditional');
+    //var income_conditional_fieldsets = $('#income-changed > fieldset');
+
+
+    $('#income-changed > fieldset').ajwcondit({
+        fieldset_switcher: '#selectIncomeChange'
+    });
+
     var error_checking_obj = {};
 
     //onload disable & hide all of the conditional fieldsets children
@@ -192,6 +203,12 @@ jQuery(document).ready(function($) {
     });
     agent_landlord_dependent.hide();
 
+    //wrote a plugin to do this instead - see ajwcondit.js
+    //disable & hide children of agent/landlord select
+    // income_conditional_fieldsets.children().filter(function(_index, e) {
+    //     instance_of_myeforms.enabledRequired($(e), true, false);
+    // });
+    // income_conditional_fieldsets.hide();
 
     //test the form
     // $('input[type=text]').val('a');
@@ -379,6 +396,53 @@ jQuery(document).ready(function($) {
             // $('.error', $('#agent-landlord-dependent')).text('');
         }
     });
+
+    //we have a select
+    //
+    //we have elements to show and hide based on the select
+    //
+    //need a way of indicating the fields that are conditional
+    //
+    //in this case fields are grouped, making individual fields dependent is messy as we have related labels / hidden inputs with labels etc
+    //
+    //so group fields into a fieldset with an id
+    //
+    //match the fieldset id to the value of the select drop down
+
+
+    //on change of select income option
+    // $('#selectIncomeChange').on('change', function(event) {
+    //     event.preventDefault();
+    //     var select = $(this);
+    //     var select_val = select.val();
+
+    //     $(income_conditional_fieldsets).each(function(index, el) {
+    //         var $this_fieldset = $(el);
+    //         if (select_val == $this_fieldset.attr('id')) {
+
+    //             $this_fieldset.children().each(function(index, el) {
+    //                 instance_of_myeforms.enabledRequired($(el), false);
+    //             });
+
+    //             body_element.find('fieldset#' + select_val).show();
+
+    //         } else {
+    //             $this_fieldset.children().each(function(index, el) {
+    //                 instance_of_myeforms.enabledRequired($(el), true);
+    //                 //reset error messages on hidden fields
+    //                 $('.error', self).text('');
+    //             });
+
+    //             body_element.find('fieldset#' + $(el).attr('id')).hide();
+    //         }
+
+    //     });
+    // });
+
+
+
+
+
 
     // $(':file').on('change', function(){
     //     var file = this.files[0];
