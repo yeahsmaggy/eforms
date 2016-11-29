@@ -1,6 +1,7 @@
 var MyEForms = function() {
     // this.widget = 'widget';
     this.body_element = $('body');
+    this.error_checking_obj = {};
 };
 
 MyEForms.prototype = {
@@ -103,40 +104,33 @@ MyEForms.prototype = {
         var valid_empty = this.validateEmpty(this_label_text, $(el).val());
         //if class mandatory
 
-        if ($(el).hasClass('mandatory')) {
-            if (!$(el).is('select') && !valid_empty) {
-                error += 'Please enter a value.';
-                //error += 'This field cannot be empty.';
-                //error += this_label_text + ' . This field cannot be empty.';
-            }
+        if (!$(el).is('select') && !valid_empty) {
+            error += 'Please enter a value.';
+        }
 
-            if ($(el).attr('type') === 'email') {
-                var valid_email = this.validateEmail($(el).val());
-                if (!valid_email) {
-                    error += ' Please enter a valid email address.';
-                }
-            };
-            if ($(el).attr('type') === 'tel') {
-                var valid_telephone = this.validateTelephone($(el).val());
-                if (!valid_telephone) {
-                    error += ' Please enter a valid telephone number.'
-                }
+        if ($(el).attr('type') === 'email') {
+            var valid_email = this.validateEmail($(el).val());
+            if (!valid_email) {
+                error += ' Please enter a valid email address.';
             }
-
-            if ($(el).is('select')) {
-                if (!$(el).val().length) {
-                    error += ' Please select an option.'
-                };
+        };
+        if ($(el).attr('type') === 'tel') {
+            var valid_telephone = this.validateTelephone($(el).val());
+            if (!valid_telephone) {
+                error += ' Please enter a valid telephone number.'
             }
         }
 
+        if ($(el).is('select')) {
+            if (!$(el).val().length) {
+                error += ' Please select an option.'
+            };
+        }
         return error;
 
 
     },
     enabledRequired: function(el, disabled, required) {
-        // console.log(disabled);
-        // console.log(required);
         if ($(el).attr('type') !== 'button') {
 
             if (typeof disabled !== 'undefined') {
@@ -149,6 +143,18 @@ MyEForms.prototype = {
             if (typeof required !== 'undefined') {
                 $(el).prop('required', required);
             }
+        }
+    },
+    checkForError: function(error, element) {
+        var this_id = element.attr('id');
+
+        if (error.length) {
+            $(element).next('.error').text(error);
+            this.error_checking_obj[this_id] = 1;
+            // return;
+        } else {
+            $(element).next('.error').text('');
+            delete this.error_checking_obj[this_id];
         }
     }
 }
@@ -171,53 +177,23 @@ jQuery(document).ready(function($) {
     any fields not shown need to be invalidated on submit e.g. prop=disabled 
     */
 
-    var instance_of_myeforms = new MyEForms();
-
-    var body_element = instance_of_myeforms.body_element;
-    var inputs = body_element.find('input');
-    var agent_landlord_dependent = $('#agent-landlord-dependent');
-    var agent_landlord_dependent_children = agent_landlord_dependent.children();
-    var landlord_agent_select = $('#selectLandlordAgent');
-    var claimant_info = $('#claimant-info');
-    var change_of_address = $('#change-of-address');
-    var fieldsets = $('fieldset');
-    var conditional_fieldsets = $('fieldset.conditional');
-    //var income_conditional_fieldsets = $('#income-changed > fieldset');
-
+    var my_eforms = new MyEForms();
+    var body_element = my_eforms.body_element;
+    $agent_landlord_dependent = $('#agent-landlord-dependent');
 
     $('#income-changed > fieldset').ajwcondit({
         fieldset_switcher: '#selectIncomeChange'
     });
 
-    var error_checking_obj = {};
-
-    //onload disable & hide all of the conditional fieldsets children
-    conditional_fieldsets.children().each(function(index, el) {
-        instance_of_myeforms.enabledRequired($(el), true, false);
-    });
-    body_element.find('fieldset.conditional').hide();
+    $('fieldset.conditional').ajwcondit({
+        fieldset_switcher: '.conditional-fieldset-select'
+    })
 
     //disable & hide children of agent/landlord select
-    agent_landlord_dependent_children.filter(function(_index, e) {
-        instance_of_myeforms.enabledRequired($(e), true, false);
+    $agent_landlord_dependent.children().filter(function(_index, e) {
+        my_eforms.enabledRequired($(e), true, false);
     });
-    agent_landlord_dependent.hide();
-
-    //wrote a plugin to do this instead - see ajwcondit.js
-    //disable & hide children of agent/landlord select
-    // income_conditional_fieldsets.children().filter(function(_index, e) {
-    //     instance_of_myeforms.enabledRequired($(e), true, false);
-    // });
-    // income_conditional_fieldsets.hide();
-
-    //test the form
-    // $('input[type=text]').val('a');
-    // $('input[type=email]').val('a@a.com');
-    // $('input[type=tel]').val('01858535312');
-    // $('input[type=date]').val('01-10-1982');
-    // $('#selectLandlordAgent').val('no');
-    // $('#selectNatureRequest').val('change-of-address');
-
+    $agent_landlord_dependent.hide();
 
     //only allow numbers in number inputs
     //http://stackoverflow.com/questions/469357/html-text-input-allow-only-numeric-input#469362
@@ -248,36 +224,17 @@ jQuery(document).ready(function($) {
     //validate when input changes
     $('input, textarea, select', 'body #content').on('change', function() {
         if ($(this).is(':enabled')) {
-            error_checking_obj = {};
+            my_eforms.error_checking_obj = {};
 
-            var error = instance_of_myeforms.validateAll(this);
-            check_for_error(error, $(this));
+            var error = my_eforms.validateAll(this);
+            my_eforms.checkForError(error, $(this));
         }
     });
-
-
-
-    function check_for_error(error, element) {
-        //pass in jquery object
-
-        var this_id = element.attr('id');
-
-        if (error.length) {
-            $(element).next('.error').text(error);
-            error_checking_obj[this_id] = 1;
-            // return;
-        } else {
-            $(element).next('.error').text('');
-            delete error_checking_obj[this_id];
-        }
-    }
-
-
 
     $('#submitForm').on('click', function(event) {
         event.preventDefault();
         //validate
-        error_checking_obj = {};
+        my_eforms.error_checking_obj = {};
 
         $('input, textarea, select', 'body #content').each(function(index, el) {
             // console.log($(this).is(':disabled'));
@@ -285,18 +242,18 @@ jQuery(document).ready(function($) {
                 //if this enabled / visible, then do...
                 //because using body selector will only attach this event to whatever is initially visible / enabled
                 //we want the event to be attached to all then we can check visibility/  status in logic
-                var error = instance_of_myeforms.validateAll($(el));
-                check_for_error(error, $(el));
+                var error = my_eforms.validateAll($(el));
+                my_eforms.checkForError(error, $(el));
             }
 
         });
 
         //remote the reference to the submit button and the file upload as we arent usign that at the moment
-        delete error_checking_obj['submitForm'];
-        delete error_checking_obj['myFiles'];
+        delete my_eforms.error_checking_obj['submitForm'];
+        delete my_eforms.error_checking_obj['myFiles'];
 
 
-        if ($.isEmptyObject(error_checking_obj)) {
+        if ($.isEmptyObject(my_eforms.error_checking_obj)) {
 
             var form_data = $('form#myForm').serializeArray();
 
@@ -308,7 +265,6 @@ jQuery(document).ready(function($) {
             });
 
             //for each in the form_data array
-            //
             $(form_data).each(function(index, el) {
 
                 //if the form_data el is in the enabled dates array
@@ -321,23 +277,13 @@ jQuery(document).ready(function($) {
                     //replace the value
                     $(el)[0].value = formatted_date;
                 };
-
-
             });
-
-            // console.log(JSON.stringify(form_data));
-
 
             $.ajax({
                 type: "POST",
                 url: "BenefitChangeofDetailsPdf",
                 data: form_data,
                 success: function(res) {
-                    console.log('success');
-                    console.log(res);
-                },
-                failure: function(res) {
-                    console.log('failure');
                     console.log(res);
                 },
                 dataType: "JSON"
@@ -348,106 +294,24 @@ jQuery(document).ready(function($) {
 
     });
 
-    //conditional based on select value matching id of fieldset
-    //todo: make this reusable
-    $(body_element).on('change', '.conditional-fieldset-select', function(event) {
-        event.preventDefault();
-        var select = $(this);
-        var select_val = select.val();
-        //check if the fieldset has the selected val id
-        $(conditional_fieldsets).filter(function(_index, e) {
-            var self = $(this);
-            var $this_fieldset = $(e);
-            var $self_children = $(this).children();
-            if (select_val === $this_fieldset.attr('id')) {
-                //and show that fieldset, enable all fields
-                $self_children.each(function(index, el) {
-                    instance_of_myeforms.enabledRequired($(el), false);
-                });
-                body_element.find('fieldset#' + select_val).show();
-            } else {
-                //hide and disable all the others
-                $self_children.each(function(index, el) {
-                    instance_of_myeforms.enabledRequired($(el), true);
-                    //reset error messages on hidden fields
-                    $('.error', self).text('');
-                });
-                body_element.find('fieldset#' + $(e).attr('id')).hide();
-            }
-        });
-    });
-
     //conditional yes / no select
-    $(landlord_agent_select).on('change', function(event) {
+    $('#selectLandlordAgent').on('change', function(event) {
         event.preventDefault();
         var select = $(this);
         var select_val = select.val();
 
         if (select_val == 'no') {
-            agent_landlord_dependent_children.filter(function(_index, e) {
-                instance_of_myeforms.enabledRequired($(e), false, true);
+            $agent_landlord_dependent.children().filter(function(_index, e) {
+                my_eforms.enabledRequired($(e), false, true);
             });
-            agent_landlord_dependent.show();
+            $agent_landlord_dependent.show();
         } else {
-            agent_landlord_dependent_children.filter(function(_index, e) {
-                instance_of_myeforms.enabledRequired($(e), true, false);
+            $agent_landlord_dependent.children().filter(function(_index, e) {
+                my_eforms.enabledRequired($(e), true, false);
             });
-            agent_landlord_dependent.hide();
-            // $('.error', $('#agent-landlord-dependent')).text('');
+            $agent_landlord_dependent.hide();
         }
     });
-
-    //we have a select
-    //
-    //we have elements to show and hide based on the select
-    //
-    //need a way of indicating the fields that are conditional
-    //
-    //in this case fields are grouped, making individual fields dependent is messy as we have related labels / hidden inputs with labels etc
-    //
-    //so group fields into a fieldset with an id
-    //
-    //match the fieldset id to the value of the select drop down
-
-
-    //on change of select income option
-    // $('#selectIncomeChange').on('change', function(event) {
-    //     event.preventDefault();
-    //     var select = $(this);
-    //     var select_val = select.val();
-
-    //     $(income_conditional_fieldsets).each(function(index, el) {
-    //         var $this_fieldset = $(el);
-    //         if (select_val == $this_fieldset.attr('id')) {
-
-    //             $this_fieldset.children().each(function(index, el) {
-    //                 instance_of_myeforms.enabledRequired($(el), false);
-    //             });
-
-    //             body_element.find('fieldset#' + select_val).show();
-
-    //         } else {
-    //             $this_fieldset.children().each(function(index, el) {
-    //                 instance_of_myeforms.enabledRequired($(el), true);
-    //                 //reset error messages on hidden fields
-    //                 $('.error', self).text('');
-    //             });
-
-    //             body_element.find('fieldset#' + $(el).attr('id')).hide();
-    //         }
-
-    //     });
-    // });
-
-
-
-
-
-
-    // $(':file').on('change', function(){
-    //     var file = this.files[0];
-
-    // });
 
     //manual multiple
     // $('#addFileUpload').on('click', function(){
@@ -486,23 +350,14 @@ jQuery(document).ready(function($) {
 
         $.ajax({
             'type': 'POST',
-            //would need equivalent in java
             'url': 'upload.php',
             'data': form_data,
             'processData': false,
             'contentType': false,
             success: function(res) {
-                //console.log(res);
                 $('#files-upload .response').text(res);
-            },
-            error: function(res) {
-                //console.log(res);
             }
         });
-        // $(':file').each(function(index, el) {
-        //     console.log(el.files[0]);
-
-        // });
     });
 
     //use native datepicker if it exists otherwise use jquery ui
@@ -510,13 +365,5 @@ jQuery(document).ready(function($) {
         $('input[type=date]').datepicker();
     }
     // from:- https://www.tjvantoll.com/2012/06/30/creating-a-native-html5-datepicker-with-a-fallback-to-jquery-ui/
-    // if (!Modernizr.touch || !Modernizr.inputtypes.date) {
-    //     $('input[type=date]')
-    //         .attr('type', 'text')
-    //         .datepicker({
-    //             // Consistent format with the HTML5 picker
-    //             dateFormat: 'yy-mm-dd'
-    //         });
-    // }
 
 });
