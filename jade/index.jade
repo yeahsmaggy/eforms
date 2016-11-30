@@ -11,6 +11,7 @@ html(lang="en")
 		script(type="text/javascript", src="bower_components/modernizer/modernizr.js")
 		script(type="text/javascript", src="js/ajwcondit.js")
 		script(type="text/javascript", src="js/benefitChangeofDetails.js")
+		script(type="text/javascript", src="js/testform.js")
 
 	body(style="transition:top 1s ease;-webkit-transition:top 1s ease;-moz-transition:top 1s ease;")
 		include ../includes/header.html
@@ -53,6 +54,9 @@ html(lang="en")
 					input(id="labelClaimantHBReference" name="labelClaimantHBReference" type="hidden" value="Claimant HB Reference")
 					input(id="txtClaimantHBReference", maxlength="8", type="number", name="txtClaimantHBReference",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
+					p If you haven’t yet got a claimant number then please visit 
+						a(href="http://www.northampton.gov.uk/info/200008/benefits/1735/make_a_claim_for_council_tax_benefits") this link
+						|  to learn about making a claim 
 
 
 
@@ -132,7 +136,7 @@ html(lang="en")
 
 
 					//What is the new rental amount?
-					label(for="txtWhatNewRentalAmount") What is the new rental amount?
+					label(for="txtWhatNewRentalAmount") What is the new rental amount? (£)
 					input(id="labelWhatNewRentalAmount" name="labelWhatNewRentalAmount" type="hidden" value="What is the new rental amount?")
 					input(id="txtWhatNewRentalAmount", type="number", name="txtWhatNewRentalAmount",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")
@@ -251,9 +255,9 @@ html(lang="en")
 					p(class="form-help error")
 
 					//Income
-					label(for="txtChangeHouseholdIncome") Income
+					label(for="txtChangeHouseholdIncome") Income (£)
 					input(id="labelChangeHouseholdIncome" name="labelChangeHouseholdIncome" type="hidden" value="Income")
-					input(id="txtChangeHouseholdIncome", name="txtChangeHouseholdIncome", type="number",  placeholder="Enter Text",  class="form-text mandatory")
+					input(id="txtChangeHouseholdIncome", name="txtChangeHouseholdIncome", type="number",  placeholder="Enter Amount",  class="form-text mandatory")
 					p(class="form-help error")
 
 					//Where they come from
@@ -283,7 +287,7 @@ html(lang="en")
 					p(class="form-help error")
 
 					//Amount of new rent
-					label(for="txtChangeRentAmountNewRent") Amount of new rent
+					label(for="txtChangeRentAmountNewRent") Amount of new rent (£)
 					input(id="labelChangeRentAmountNewRent" name="labelChangeRentAmountNewRent" type="hidden" value="Amount of new rent")
 					input(id="txtChangeRentAmountNewRent", name="txtChangeRentAmountNewRent", type="number",  placeholder="Enter Text",  class="form-text mandatory")
 					p(class="form-help error")

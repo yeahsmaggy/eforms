@@ -103,29 +103,39 @@ MyEForms.prototype = {
 
         var valid_empty = this.validateEmpty(this_label_text, $(el).val());
         //if class mandatory
+        if ($(el).hasClass('mandatory')) {
+            if (!$(el).is('select') && !valid_empty) {
+                error += 'Please enter a value.';
+            }
+            if ($(el).is('select')) {
+                if (!$(el).val().length) {
+                    error += ' Please select an option.'
+                };
+            }
 
-        if (!$(el).is('select') && !valid_empty) {
-            error += 'Please enter a value.';
         }
 
-        if ($(el).attr('type') === 'email') {
-            var valid_email = this.validateEmail($(el).val());
-            if (!valid_email) {
-                error += ' Please enter a valid email address.';
-            }
-        };
-        if ($(el).attr('type') === 'tel') {
-            var valid_telephone = this.validateTelephone($(el).val());
-            if (!valid_telephone) {
-                error += ' Please enter a valid telephone number.'
-            }
-        }
-
-        if ($(el).is('select')) {
-            if (!$(el).val().length) {
-                error += ' Please select an option.'
+        //we still want this to trigger if not mandatory but 
+        //a value has been entereed
+        if ($(el).val() != '') {
+            if ($(el).attr('type') === 'email') {
+                var valid_email = this.validateEmail($(el).val());
+                if (!valid_email) {
+                    error += ' Please enter a valid email address.';
+                }
             };
+
+            if ($(el).attr('type') === 'tel') {
+                var valid_telephone = this.validateTelephone($(el).val());
+                if (!valid_telephone) {
+                    error += ' Please enter a valid telephone number.'
+                }
+            }
         }
+
+
+
+
         return error;
 
 
