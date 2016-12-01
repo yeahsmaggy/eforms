@@ -315,8 +315,9 @@ html(lang="en")
 				fieldset(id="files-upload")
 					p(class="form-help error")
 					p(class="form-help response", style="color:black;")
-					input(id="myFiles",type="file" multiple)
-					//- button(id="addFileUpload", type="button") Add one
+					fieldset(class="upload-file-block")
+						input(id="file-upload",class="file-upload-input" type="file")
+					button(class="file-add-another", type="button") Add another
 					ul(id="image-list")
 
 				input(id="submitForm", type="submit",  text="Submit") 

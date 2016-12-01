@@ -335,24 +335,73 @@ jQuery(document).ready(function($) {
     //https://code.tutsplus.com/tutorials/uploading-files-with-ajax--net-21077
     //http://stackoverflow.com/questions/13656066/html5-multiple-file-upload-upload-one-by-one-through-ajax#13692285
 
-    $('#myFiles').on('change', function() {
-        var file_input = this;
-        var form_data = false;
+    $upload_button  = $('<button id="upload" class="upload" type="button">Upload</button>');
+    $remove_button  = $('<button id="remove" class="remove" type="button">Remove</button>');
+//temp
+            $("input:file").after($remove_button);
+            $remove_button.after($upload_button);
 
+    $("input:file").on('change', function(){
+        if($(this).val()){
+            // $(this).after($upload_button);
+            // $upload_button.after($remove_button);
+
+        }else {
+            $(this).next('button').remove();
+        }
+    });
+
+    $('body').on('click',  'button.upload',function(){
+        event.preventDefault();
+
+        console.log('smal');
+        $file_input = $(this).closest('.upload-file-block').find('input:file');
+        $(this).prop( "disabled", true );
+        upload( $file_input[0] );
+        $(this).prop( "disabled", false );
+
+    });
+
+     $('body').on('click','button.remove',  function(){
+        event.preventDefault();
+        $(this).prev('input:file').val('');
+    });
+
+    $('button.file-add-another').on('click', function(){
+        event.preventDefault();
+        var count = $('fieldset#files-upload > fieldset').length;
+
+
+        $new_fieldset = $('<fieldset/>', {id:'file-upload-' + count,class:'upload-file-block', name:'data'}) ;
+        $new_fieldset.append($('<input/>', {id:'file-upload', class:'file-upload-input', type:'file'}));
+        $new_fieldset.append($('<button/>', {id:'remove', class:'remove', type:'button', text:'Remove'}));
+        $new_fieldset.append($('<button/>', {id:'upload', class:'upload', type:'button', text:'Upload'}));
+
+
+        $(this).prev('fieldset').after( $new_fieldset   );
+
+
+        
+    });
+
+    function upload(file_input){
+        console.log(file_input.files);
+        var form_data = false;
         if (window.FormData) {
             form_data = new FormData();
             //hide uploadButton
         }
         var i = 0;
         var files_array = [];
-        for (i; i < this.files.length; i++) {
+        for (i; i < file_input.files.length; i++) {
 
+        console.log(file_input.files[i].type);
             if (form_data) {
-                if (this.files[i].type !== 'application/pdf') {
-                    $('#files-upload .response').text('must be a pdf');
+                if (file_input.files[i].type !== 'image/jpeg') {
+                    $('#files-upload .response').text('must be a jpg');
                     return;
                 } else {
-                    form_data.append("files[]", this.files[i]);
+                    form_data.append("files[]", file_input.files[i]);
                 }
             }
 
@@ -360,15 +409,16 @@ jQuery(document).ready(function($) {
 
         $.ajax({
             'type': 'POST',
-            'url': 'upload.php',
+            'url': 'uploadFiles',
             'data': form_data,
             'processData': false,
             'contentType': false,
             success: function(res) {
                 $('#files-upload .response').text(res);
+                //if successful append thumbanil of image somewhere.......
             }
         });
-    });
+    }
 
     //use native datepicker if it exists otherwise use jquery ui
     if (!Modernizr.inputtypes['date']) {

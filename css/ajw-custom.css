@@ -10,3 +10,7 @@ form fieldset select.form-select {
     width: 50%;
     height: 40px;
 }
+
+.file-upload-button {
+    display: inline;
+}
