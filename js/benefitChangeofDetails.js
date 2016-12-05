@@ -1,15 +1,207 @@
 var MyEForms = function() {
     // this.widget = 'widget';
-    this.body_element = $('body');
+    self = this;
     this.error_checking_obj = {};
+
 };
 
 MyEForms.prototype = {
     create: function() {
-
         // console.log(this.widget);
         // console.log('constructor');
 
+    },
+    addEventListeners: function() {
+        //yes / no conditional select
+        this.selectSwitch('#agent-landlord-dependent', '#selectLandlordAgent');
+        this.onlyNumbersInNumberInputs();
+
+        //add asterix to mandatory fields
+        $(".mandatory").prev().prev('label').append('*');
+
+        //validate when input changes
+        $('input, textarea, select', 'body #content').on('change', function() {
+            if ($(this).is(':enabled')) {
+                this.error_checking_obj = {};
+
+                var error = self.validateAll(this);
+                self.checkForError(error, $(this));
+            }
+        });
+
+        //file upload stuff:
+        //https://code.tutsplus.com/tutorials/uploading-files-with-ajax--net-21077
+        //http://stackoverflow.com/questions/13656066/html5-multiple-file-upload-upload-one-by-one-through-ajax#13692285
+
+        $upload_button = $('<button id="upload" class="upload" type="button">Upload</button>');
+        $remove_button = $('<button id="remove" class="remove" type="button">Remove</button>');
+        //temp
+        $("input:file").after($upload_button);
+
+        $("input:file").on('change', function() {
+            if ($(this).val()) {
+                // $(this).after($upload_button);
+                // $upload_button.after($remove_button);
+
+            } else {
+                $(this).next('button').remove();
+            }
+        });
+
+        $('body').on('click', 'button.upload', function() {
+            event.preventDefault();
+            $file_input = $(this).closest('.upload-file-block').find('input:file');
+            $(this).prop("disabled", true);
+
+            self.upload($file_input[0]);
+
+            $(this).prop("disabled", false);
+        });
+
+        $('body').on('click', 'button.remove', function() {
+            event.preventDefault();
+            // $(this).prev('input:file').val('');
+            $(this).parent.remove();
+
+            //delete the file from the filesystem
+            // $.ajax({
+            //     url: '/UploadFiles',
+            //     type: 'POST',
+            //     dataType: 'json',
+            //     data: {delete: 'value1'},
+            // })
+            // .success(function() {
+            //     console.log("success");
+            // });        
+        });
+
+
+        $('button.file-add-another').on('click', function() {
+            event.preventDefault();
+            var count = $('fieldset#files-upload > fieldset').length;
+
+
+            $new_fieldset = $('<fieldset/>', {
+                id: 'file-upload-' + count,
+                class: 'upload-file-block',
+                name: 'data'
+            });
+            $new_fieldset.append($('<input/>', {
+                id: 'file-upload',
+                class: 'file-upload-input',
+                type: 'file'
+            }));
+            $new_fieldset.append($('<button/>', {
+                id: 'remove',
+                class: 'remove',
+                type: 'button',
+                text: 'Remove'
+            }));
+            $new_fieldset.append($('<button/>', {
+                id: 'upload',
+                class: 'upload',
+                type: 'button',
+                text: 'Upload'
+            }));
+
+
+            $(this).prev('fieldset').after($new_fieldset);
+
+            self.toggleAddAnother();
+        });
+
+
+
+        //form submit button click
+        $('#submitForm').on('click', function(event) {
+            event.preventDefault();
+            //validate
+            this.error_checking_obj = {};
+
+            $('input, textarea, select', 'body #content').each(function(index, el) {
+                // console.log($(this).is(':disabled'));
+                if ($(this).is(':enabled')) {
+                    //if this enabled / visible, then do...
+                    //because using body selector will only attach this event to whatever is initially visible / enabled
+                    //we want the event to be attached to all then we can check visibility/  status in logic
+                    var error = self.validateAll($(el));
+                    self.checkForError(error, $(el));
+                }
+
+            });
+
+            //remote the reference to the submit button and the file upload as we arent usign that at the moment
+            delete this.error_checking_obj['submitForm'];
+            delete this.error_checking_obj['myFiles'];
+
+            if ($.isEmptyObject(self.error_checking_obj)) {
+
+                var form_data = $('form#myForm').serializeArray();
+
+                var enabled_dates = [];
+
+                //get the enabled dates ids and values in an array
+                $('input[type=date]:enabled').each(function(index, el) {
+                    enabled_dates.push($(el).attr('id'));
+                });
+
+                //for each in the form_data array
+                $(form_data).each(function(index, el) {
+
+                    //if the form_data el is in the enabled dates array
+                    if (($.inArray($(el).prop("name"), enabled_dates)) !== -1) {
+
+                        //create a new date from it in the right format
+                        var formatted_date = new Date($(el)[0].value);
+                        formatted_date = $.datepicker.formatDate('dd/mm/yy', formatted_date);
+
+                        //replace the value
+                        $(el)[0].value = formatted_date;
+                    };
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "BenefitChangeofDetailsPdf",
+                    data: form_data,
+                    success: function(res) {
+                        console.log(res);
+                    },
+                    dataType: "JSON"
+                });
+
+            };
+
+
+        });
+
+
+    },
+    selectSwitch: function(el, select_el) {
+        //disable & hide children of agent/landlord select
+        $(el).children().filter(function(_index, e) {
+            self.enabledRequired($(e), true, false);
+        });
+        $(el).hide();
+
+        //conditional yes / no select
+        $(select_el).on('change', function(event) {
+            event.preventDefault();
+            var select = $(this);
+            var select_val = select.val();
+
+            if (select_val == 'no') {
+                $(el).children().filter(function(_index, e) {
+                    self.enabledRequired($(e), false, true);
+                });
+                $(el).show();
+            } else {
+                $(el).children().filter(function(_index, e) {
+                    self.enabledRequired($(e), true, false);
+                });
+                $(el).hide();
+            }
+        });
     },
     validateEmail: function(email_address) {
         var pattern = /^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([ \t]*\r\n)?[ \t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([ \t]*\r\n)?[ \t]+)?")@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i;
@@ -19,8 +211,6 @@ MyEForms.prototype = {
         if (input_value.length) {
             return true;
         }
-
-
     },
     validateTelephone: function(telno) {
 
@@ -134,8 +324,6 @@ MyEForms.prototype = {
         }
 
 
-
-
         return error;
 
 
@@ -166,12 +354,85 @@ MyEForms.prototype = {
             $(element).next('.error').text('');
             delete this.error_checking_obj[this_id];
         }
+    },
+    onlyNumbersInNumberInputs: function() {
+        //only allow numbers in number inputs
+        //http://stackoverflow.com/questions/469357/html-text-input-allow-only-numeric-input#469362
+        $("input[type=number]").keydown(function(e) {
+            // Allow: backspace, delete, tab, escape, enter and .
+            if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                // Allow: Ctrl+A
+                (e.keyCode == 65 && e.ctrlKey === true) ||
+                // Allow: Ctrl+C
+                (e.keyCode == 67 && e.ctrlKey === true) ||
+                // Allow: Ctrl+X
+                (e.keyCode == 88 && e.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (e.keyCode >= 35 && e.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
+        });
+
+    },
+    upload: function(file_input) {
+        var form_data = false;
+        if (window.FormData) {
+            form_data = new FormData();
+            //hide uploadButton
+        }
+        var i = 0;
+        var files_array = [];
+        //        for (i; i < file_input.files.length; i++) {
+        //            if (form_data) {
+        //                if (file_input.files[i].type !== 'image/jpeg') {
+        //                    $('#files-upload .response').text('must be a jpg');
+        //                    return;
+        //                } else {
+        //                    form_data.append("files[]", file_input.files[i]);
+        //                }
+        //            }
+        //
+        //        }
+        form_data.append("file", file_input.files[0]);
+        form_data.append("test", "value");
+        $.ajax({
+            'type': 'POST',
+            'url': 'UploadFiles',
+            'data': form_data,
+            'processData': false,
+            'contentType': false,
+            enctype: 'multipart/form-data',
+            success: function(data, text) {
+                console.log(data);
+                console.log(data.fileName);
+                if (typeof data.fileName !== 'undefined') {
+                    $(file_input).prop('disabled', true);
+                    this.toggleAddAnother();
+
+                }
+            },
+            error: function(request, status, error) {
+                console.log(request.responseText);
+            }
+        });
+    },
+    toggleAddAnother: function() {
+        //only show the add another button if the last file input is disabled - e.g. it represents an already uploaded file
+        if ($('button.file-add-another').prev('.upload-file-block').find('input:file').prop('disabled') == false) {
+            $('button.file-add-another').hide();
+        } else {
+            $('button.file-add-another').show();
+        }
     }
+
 }
 
 jQuery(document).ready(function($) {
-    $('body').addClass('jsLoaded');
-
     /* -- form elements --
     some are mandatory (can't be empty)
     */
@@ -188,8 +449,8 @@ jQuery(document).ready(function($) {
     */
 
     var my_eforms = new MyEForms();
-    var body_element = my_eforms.body_element;
-    $agent_landlord_dependent = $('#agent-landlord-dependent');
+    my_eforms.addEventListeners();
+    my_eforms.toggleAddAnother();
 
     $('#income-changed > fieldset').ajwcondit({
         fieldset_switcher: '#selectIncomeChange'
@@ -198,227 +459,6 @@ jQuery(document).ready(function($) {
     $('fieldset.conditional').ajwcondit({
         fieldset_switcher: '.conditional-fieldset-select'
     })
-
-    //disable & hide children of agent/landlord select
-    $agent_landlord_dependent.children().filter(function(_index, e) {
-        my_eforms.enabledRequired($(e), true, false);
-    });
-    $agent_landlord_dependent.hide();
-
-    //only allow numbers in number inputs
-    //http://stackoverflow.com/questions/469357/html-text-input-allow-only-numeric-input#469362
-    $("input[type=number]").keydown(function(e) {
-        // Allow: backspace, delete, tab, escape, enter and .
-        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
-            // Allow: Ctrl+A
-            (e.keyCode == 65 && e.ctrlKey === true) ||
-            // Allow: Ctrl+C
-            (e.keyCode == 67 && e.ctrlKey === true) ||
-            // Allow: Ctrl+X
-            (e.keyCode == 88 && e.ctrlKey === true) ||
-            // Allow: home, end, left, right
-            (e.keyCode >= 35 && e.keyCode <= 39)) {
-            // let it happen, don't do anything
-            return;
-        }
-        // Ensure that it is a number and stop the keypress
-        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
-            e.preventDefault();
-        }
-    });
-
-
-    //add asterix to mandatory fields
-    $(".mandatory").prev().append('*');
-
-    //validate when input changes
-    $('input, textarea, select', 'body #content').on('change', function() {
-        if ($(this).is(':enabled')) {
-            my_eforms.error_checking_obj = {};
-
-            var error = my_eforms.validateAll(this);
-            my_eforms.checkForError(error, $(this));
-        }
-    });
-
-    $('#submitForm').on('click', function(event) {
-        event.preventDefault();
-        //validate
-        my_eforms.error_checking_obj = {};
-
-        $('input, textarea, select', 'body #content').each(function(index, el) {
-            // console.log($(this).is(':disabled'));
-            if ($(this).is(':enabled')) {
-                //if this enabled / visible, then do...
-                //because using body selector will only attach this event to whatever is initially visible / enabled
-                //we want the event to be attached to all then we can check visibility/  status in logic
-                var error = my_eforms.validateAll($(el));
-                my_eforms.checkForError(error, $(el));
-            }
-
-        });
-
-        //remote the reference to the submit button and the file upload as we arent usign that at the moment
-        delete my_eforms.error_checking_obj['submitForm'];
-        delete my_eforms.error_checking_obj['myFiles'];
-
-
-        if ($.isEmptyObject(my_eforms.error_checking_obj)) {
-
-            var form_data = $('form#myForm').serializeArray();
-
-            var enabled_dates = [];
-
-            //get the enabled dates ids and values in an array
-            $('input[type=date]:enabled').each(function(index, el) {
-                enabled_dates.push($(el).attr('id'));
-            });
-
-            //for each in the form_data array
-            $(form_data).each(function(index, el) {
-
-                //if the form_data el is in the enabled dates array
-                if (($.inArray($(el).prop("name"), enabled_dates)) !== -1) {
-
-                    //create a new date from it in the right format
-                    var formatted_date = new Date($(el)[0].value);
-                    formatted_date = $.datepicker.formatDate('dd/mm/yy', formatted_date);
-
-                    //replace the value
-                    $(el)[0].value = formatted_date;
-                };
-            });
-
-            $.ajax({
-                type: "POST",
-                url: "BenefitChangeofDetailsPdf",
-                data: form_data,
-                success: function(res) {
-                    console.log(res);
-                },
-                dataType: "JSON"
-            });
-
-        };
-
-
-    });
-
-    //conditional yes / no select
-    $('#selectLandlordAgent').on('change', function(event) {
-        event.preventDefault();
-        var select = $(this);
-        var select_val = select.val();
-
-        if (select_val == 'no') {
-            $agent_landlord_dependent.children().filter(function(_index, e) {
-                my_eforms.enabledRequired($(e), false, true);
-            });
-            $agent_landlord_dependent.show();
-        } else {
-            $agent_landlord_dependent.children().filter(function(_index, e) {
-                my_eforms.enabledRequired($(e), true, false);
-            });
-            $agent_landlord_dependent.hide();
-        }
-    });
-
-    //manual multiple
-    // $('#addFileUpload').on('click', function(){
-    //     // console.log($('fieldset#files-upload > input:file').length);
-    //     if($('fieldset#files-upload > input:file').length < 5){
-    //       $('input:file:last-of-type').after('<br><input type="file" name="myfile[]"/>');
-    //     }else{
-    //         $('fieldset#files-upload > .error').text('Max number of files 5');
-    //     }
-    // });
-    //https://code.tutsplus.com/tutorials/uploading-files-with-ajax--net-21077
-    //http://stackoverflow.com/questions/13656066/html5-multiple-file-upload-upload-one-by-one-through-ajax#13692285
-
-    $upload_button  = $('<button id="upload" class="upload" type="button">Upload</button>');
-    $remove_button  = $('<button id="remove" class="remove" type="button">Remove</button>');
-//temp
-            $("input:file").after($remove_button);
-            $remove_button.after($upload_button);
-
-    $("input:file").on('change', function(){
-        if($(this).val()){
-            // $(this).after($upload_button);
-            // $upload_button.after($remove_button);
-
-        }else {
-            $(this).next('button').remove();
-        }
-    });
-
-    $('body').on('click',  'button.upload',function(){
-        event.preventDefault();
-
-        console.log('smal');
-        $file_input = $(this).closest('.upload-file-block').find('input:file');
-        $(this).prop( "disabled", true );
-        upload( $file_input[0] );
-        $(this).prop( "disabled", false );
-
-    });
-
-     $('body').on('click','button.remove',  function(){
-        event.preventDefault();
-        $(this).prev('input:file').val('');
-    });
-
-    $('button.file-add-another').on('click', function(){
-        event.preventDefault();
-        var count = $('fieldset#files-upload > fieldset').length;
-
-
-        $new_fieldset = $('<fieldset/>', {id:'file-upload-' + count,class:'upload-file-block', name:'data'}) ;
-        $new_fieldset.append($('<input/>', {id:'file-upload', class:'file-upload-input', type:'file'}));
-        $new_fieldset.append($('<button/>', {id:'remove', class:'remove', type:'button', text:'Remove'}));
-        $new_fieldset.append($('<button/>', {id:'upload', class:'upload', type:'button', text:'Upload'}));
-
-
-        $(this).prev('fieldset').after( $new_fieldset   );
-
-
-        
-    });
-
-    function upload(file_input){
-        console.log(file_input.files);
-        var form_data = false;
-        if (window.FormData) {
-            form_data = new FormData();
-            //hide uploadButton
-        }
-        var i = 0;
-        var files_array = [];
-        for (i; i < file_input.files.length; i++) {
-
-        console.log(file_input.files[i].type);
-            if (form_data) {
-                if (file_input.files[i].type !== 'image/jpeg') {
-                    $('#files-upload .response').text('must be a jpg');
-                    return;
-                } else {
-                    form_data.append("files[]", file_input.files[i]);
-                }
-            }
-
-        }
-
-        $.ajax({
-            'type': 'POST',
-            'url': 'uploadFiles',
-            'data': form_data,
-            'processData': false,
-            'contentType': false,
-            success: function(res) {
-                $('#files-upload .response').text(res);
-                //if successful append thumbanil of image somewhere.......
-            }
-        });
-    }
 
     //use native datepicker if it exists otherwise use jquery ui
     if (!Modernizr.inputtypes['date']) {
