@@ -29,88 +29,6 @@ MyEForms.prototype = {
             }
         });
 
-        //file upload stuff:
-        //https://code.tutsplus.com/tutorials/uploading-files-with-ajax--net-21077
-        //http://stackoverflow.com/questions/13656066/html5-multiple-file-upload-upload-one-by-one-through-ajax#13692285
-
-        $upload_button = $('<button id="upload" class="upload" type="button">Upload</button>');
-        $remove_button = $('<button id="remove" class="remove" type="button">Remove</button>');
-        //temp
-        $("input:file").after($upload_button);
-
-        $("input:file").on('change', function() {
-            if ($(this).val()) {
-                // $(this).after($upload_button);
-                // $upload_button.after($remove_button);
-
-            } else {
-                $(this).next('button').remove();
-            }
-        });
-
-        $('body').on('click', 'button.upload', function() {
-            event.preventDefault();
-            $file_input = $(this).closest('.upload-file-block').find('input:file');
-            $(this).prop("disabled", true);
-
-            self.upload($file_input[0]);
-
-            $(this).prop("disabled", false);
-        });
-
-        $('body').on('click', 'button.remove', function() {
-            event.preventDefault();
-            // $(this).prev('input:file').val('');
-            $(this).parent.remove();
-
-            //delete the file from the filesystem
-            // $.ajax({
-            //     url: '/UploadFiles',
-            //     type: 'POST',
-            //     dataType: 'json',
-            //     data: {delete: 'value1'},
-            // })
-            // .success(function() {
-            //     console.log("success");
-            // });        
-        });
-
-
-        $('button.file-add-another').on('click', function() {
-            event.preventDefault();
-            var count = $('fieldset#files-upload > fieldset').length;
-
-
-            $new_fieldset = $('<fieldset/>', {
-                id: 'file-upload-' + count,
-                class: 'upload-file-block',
-                name: 'data'
-            });
-            $new_fieldset.append($('<input/>', {
-                id: 'file-upload',
-                class: 'file-upload-input',
-                type: 'file'
-            }));
-            $new_fieldset.append($('<button/>', {
-                id: 'remove',
-                class: 'remove',
-                type: 'button',
-                text: 'Remove'
-            }));
-            $new_fieldset.append($('<button/>', {
-                id: 'upload',
-                class: 'upload',
-                type: 'button',
-                text: 'Upload'
-            }));
-
-
-            $(this).prev('fieldset').after($new_fieldset);
-
-            self.toggleAddAnother();
-        });
-
-
 
         //form submit button click
         $('#submitForm').on('click', function(event) {
@@ -171,14 +89,149 @@ MyEForms.prototype = {
                 });
 
             };
+        });
+        
+        //file upload stuff:
+        //https://code.tutsplus.com/tutorials/uploading-files-with-ajax--net-21077
+        //http://stackoverflow.com/questions/13656066/html5-multiple-file-upload-upload-one-by-one-through-ajax#13692285
 
+        $upload_button = $('<button id="upload" class="upload" type="button">Upload</button>');
+        $remove_button = $('<button id="remove" class="remove" type="button">Remove</button>');
 
+        //upload form shows
+       
+        $("input:file").after($upload_button);
+
+        $("input:file").on('change', function() {
+            //user selects file
+            if ($(this).val()) {
+            } else {
+                $(this).next('button').remove();
+            }
+        });
+
+        $('body').on('click', 'button.upload', function() {
+            //user clicks upload
+
+            event.preventDefault();
+            $file_input = $(this).closest('.upload-file-block').find('input:file');
+            $(this).prop("disabled", true);
+
+            self.upload($file_input[0]);
+
+            $(this).prop("disabled", false);
+        });
+
+        $('body').on('click', 'button.remove', function() {
+            event.preventDefault();
+            $(this).parent().remove();
+            //delete the file from the filesystem?      
         });
 
 
+        $('button.file-add-another').on('click', function() {
+            event.preventDefault();
+            var count = $('fieldset#files-upload > fieldset').length;
+
+            $new_fieldset = $('<fieldset/>', {
+                id: 'file-upload-' + count,
+                class: 'upload-file-block',
+                name: 'data'
+            });
+            $new_fieldset.append($('<input/>', {
+                id: 'file-upload',
+                class: 'file-upload-input',
+                type: 'file'
+            }));
+            $new_fieldset.append($('<button/>', {
+                id: 'upload',
+                class: 'upload',
+                type: 'button',
+                text: 'Upload'
+            }));
+
+            if(count == 0){
+                $('fieldset#files-upload > p.response').after($new_fieldset);
+            }else{
+                $('fieldset#files-upload fieldset:last-of-type').after($new_fieldset);
+            }
+            
+            
+            self.toggleAddAnother();
+        });
+
+    },
+    upload: function(file_input) {
+        var form_data = false;
+        if (window.FormData) {
+            form_data = new FormData();
+        }
+        
+        //mime type checking
+        var accepted_mime_types = [ 'image/jpeg' ,  'image/png',  'image/gif'  ];
+        
+        if (  $.inArray(file_input.files[0].type , accepted_mime_types) == -1  ) {
+            $('#files-upload .response').text('must be a jpg, gif or png');
+            return;
+        }
+        
+        form_data.append("file", file_input.files[0]);        
+       
+        //file uploads to server
+        $.ajax({
+            'type': 'POST',
+            'url': 'UploadFiles',
+            'data': form_data,
+            'processData': false,
+            'contentType': false,
+            enctype: 'multipart/form-data',
+            success: function(data, text) {
+
+                if (typeof data.error == 'undefined') {
+                    var file_input_parent_block = $(file_input).parent();
+
+                    //file uploads successfully
+                    //hide error?
+                    $('#files-upload').find('.response', '.error').text('');
+
+                    //replace the file input with a file name rather than disable
+                    $(file_input).replaceWith(data.fileName);
+
+                    //hide the upload button for this fieldset
+                   $(file_input_parent_block).find('button').hide();
+
+                    //add a remove button to remove this fieldset (and potenttially delete the file)
+                    $(file_input_parent_block).append('<button id="remove" class="remove" type="button">Remove</button>');
+
+                    //show the add another button                    
+                    self.toggleAddAnother();
+
+                    
+                }else {
+                    //if we are not overwriting files
+//                    if(data.exception=="FileAlreadyExistsException"){
+//                      $('#files-upload').find('.error').text('File already exists');
+//                    }
+                }
+            },
+            error: function(request, status, error) {
+                //return a proper error response from the server?
+                //handle errors properly?    
+            }
+        });
+    },
+    toggleAddAnother: function() {
+        //only show the add another button if the last file input is disabled -
+        //e.g. it represents an already uploaded file
+
+        if ($('button.file-add-another').prev('.upload-file-block').find('input:file').prop('disabled') == false) {
+            $('button.file-add-another').hide();
+        } else {
+            $('button.file-add-another').show();
+        }
     },
     selectSwitch: function(el, select_el) {
-        //disable & hide children of agent/landlord select
+        //disable & hide children of select
         $(el).children().filter(function(_index, e) {
             self.enabledRequired($(e), true, false);
         });
@@ -378,56 +431,6 @@ MyEForms.prototype = {
             }
         });
 
-    },
-    upload: function(file_input) {
-        var form_data = false;
-        if (window.FormData) {
-            form_data = new FormData();
-            //hide uploadButton
-        }
-        var i = 0;
-        var files_array = [];
-        //        for (i; i < file_input.files.length; i++) {
-        //            if (form_data) {
-        //                if (file_input.files[i].type !== 'image/jpeg') {
-        //                    $('#files-upload .response').text('must be a jpg');
-        //                    return;
-        //                } else {
-        //                    form_data.append("files[]", file_input.files[i]);
-        //                }
-        //            }
-        //
-        //        }
-        form_data.append("file", file_input.files[0]);
-        form_data.append("test", "value");
-        $.ajax({
-            'type': 'POST',
-            'url': 'UploadFiles',
-            'data': form_data,
-            'processData': false,
-            'contentType': false,
-            enctype: 'multipart/form-data',
-            success: function(data, text) {
-                console.log(data);
-                console.log(data.fileName);
-                if (typeof data.fileName !== 'undefined') {
-                    $(file_input).prop('disabled', true);
-                    this.toggleAddAnother();
-
-                }
-            },
-            error: function(request, status, error) {
-                console.log(request.responseText);
-            }
-        });
-    },
-    toggleAddAnother: function() {
-        //only show the add another button if the last file input is disabled - e.g. it represents an already uploaded file
-        if ($('button.file-add-another').prev('.upload-file-block').find('input:file').prop('disabled') == false) {
-            $('button.file-add-another').hide();
-        } else {
-            $('button.file-add-another').show();
-        }
     }
 
 }
@@ -461,9 +464,10 @@ jQuery(document).ready(function($) {
     })
 
     //use native datepicker if it exists otherwise use jquery ui
+    // from:- https://www.tjvantoll.com/2012/06/30/creating-a-native-html5-datepicker-with-a-fallback-to-jquery-ui/
+
     if (!Modernizr.inputtypes['date']) {
         $('input[type=date]').datepicker();
     }
-    // from:- https://www.tjvantoll.com/2012/06/30/creating-a-native-html5-datepicker-with-a-fallback-to-jquery-ui/
 
 });
