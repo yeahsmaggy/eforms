@@ -2,7 +2,8 @@ var MyEForms = function() {
     // this.widget = 'widget';
     self = this;
     this.error_checking_obj = {};
-
+    
+    self.claimant_reference = "12341234";
 };
 
 MyEForms.prototype = {
@@ -12,6 +13,12 @@ MyEForms.prototype = {
 
     },
     addEventListeners: function() {
+        
+        //hide file uploads initially
+        //$('#files-upload').hide();
+        //temp show
+        $('#files-upload').show();
+        
         //yes / no conditional select
         this.selectSwitch('#agent-landlord-dependent', '#selectLandlordAgent');
         this.onlyNumbersInNumberInputs();
@@ -55,7 +62,7 @@ MyEForms.prototype = {
             if ($.isEmptyObject(self.error_checking_obj)) {
 
                 var form_data = $('form#myForm').serializeArray();
-
+                console.log(form_data);
                 var enabled_dates = [];
 
                 //get the enabled dates ids and values in an array
@@ -78,12 +85,33 @@ MyEForms.prototype = {
                     };
                 });
 
+
+                
+                
                 $.ajax({
                     type: "POST",
                     url: "BenefitChangeofDetailsPdf",
                     data: form_data,
                     success: function(res) {
-                        console.log(res);
+                        if( typeof res.caseReference !== 'undefined' && typeof res.pdfFileName !== 'undefined'){
+                            
+                            console.log(res);      
+                            
+                            self.claimant_reference = res.caseReference;
+                            self.pdf_file_name = res.pdfFileName;
+                            
+                            $('#claimant-info').hide();
+                            $('#change-of-address').hide();
+                            $('#change-of-income').hide();
+                            $('#change-of-household').hide();
+                            $('#change-of-rent').hide();
+                            $('#other-change').hide();   
+                            $('#submitForm').hide();
+                            
+                            
+                            $('#files-upload').show();
+
+                        };
                     },
                     dataType: "JSON"
                 });
@@ -115,7 +143,7 @@ MyEForms.prototype = {
 
             event.preventDefault();
             $file_input = $(this).closest('.upload-file-block').find('input:file');
-            $(this).prop("disabled", true);
+//            $(this).prop("disabled", true);
 
             self.upload($file_input[0]);
 
@@ -161,7 +189,8 @@ MyEForms.prototype = {
         });
 
     },
-    upload: function(file_input) {
+    upload: function(file_input) {      
+        
         var form_data = false;
         if (window.FormData) {
             form_data = new FormData();
@@ -176,7 +205,15 @@ MyEForms.prototype = {
         }
         
         form_data.append("file", file_input.files[0]);        
-       
+        //we need to relate the images to the claimantNumber
+        //we need to relate the images to the pdfFileName (via the Unix timestamp used)
+  
+        console.log(self.claimant_reference);
+        console.log(self.pdf_file_name);
+        
+        form_data.append("claimantNumber", self.claimant_reference);
+        form_data.append("pdfFileName", self.pdf_file_name);
+        
         //file uploads to server
         $.ajax({
             'type': 'POST',
