@@ -3,7 +3,11 @@ var MyEForms = function() {
     self = this;
     this.error_checking_obj = {};
     
-    self.claimant_reference = "12341234";
+    self.arrayOfAttachments =[];
+    self.claimant_reference= "12341234";
+    self.pdf_file_name= self.claimant_reference + "_default_0510821234.jpg";
+    
+    
 };
 
 MyEForms.prototype = {
@@ -16,9 +20,11 @@ MyEForms.prototype = {
         
         //hide file uploads initially
         //$('#files-upload').hide();
+        //$('#finishForm').hide();
         //temp show
         $('#files-upload').show();
-        
+        $('#finishForm').show();
+
         //yes / no conditional select
         this.selectSwitch('#agent-landlord-dependent', '#selectLandlordAgent');
         this.onlyNumbersInNumberInputs();
@@ -38,7 +44,7 @@ MyEForms.prototype = {
 
 
         //form submit button click
-        $('#submitForm').on('click', function(event) {
+        $('#nextForm').on('click', function(event) {
             event.preventDefault();
             //validate
             this.error_checking_obj = {};
@@ -56,7 +62,7 @@ MyEForms.prototype = {
             });
 
             //remote the reference to the submit button and the file upload as we arent usign that at the moment
-            delete this.error_checking_obj['submitForm'];
+            delete this.error_checking_obj['nextForm'];
             delete this.error_checking_obj['myFiles'];
 
             if ($.isEmptyObject(self.error_checking_obj)) {
@@ -106,10 +112,12 @@ MyEForms.prototype = {
                             $('#change-of-household').hide();
                             $('#change-of-rent').hide();
                             $('#other-change').hide();   
-                            $('#submitForm').hide();
+                            $('#nextForm').hide();
                             
                             
                             $('#files-upload').show();
+                            $('#finishForm').show();
+                            
 
                         };
                     },
@@ -131,8 +139,9 @@ MyEForms.prototype = {
         $("input:file").after($upload_button);
 
         $("input:file").on('change', function() {
-            //user selects file
+            //user selects file         
             if ($(this).val()) {
+            
             } else {
                 $(this).next('button').remove();
             }
@@ -142,6 +151,21 @@ MyEForms.prototype = {
             //user clicks upload
 
             event.preventDefault();
+            //TO DO DON"T ALLOW UPLOAD OF SAME TWICE???? CHECK THE OTHER INPUTS ON UPLOAD CLICK
+            console.log('value of input');
+            console.log($(this).val());
+            
+            console.log('parent of this input');
+            console.log($(this).parent());
+            
+            console.log('the elements in the parent');
+            $(this).parent().each(function(index, el){
+                
+                console.log(index);
+                console.log(el);
+                
+            });
+            
             $file_input = $(this).closest('.upload-file-block').find('input:file');
 //            $(this).prop("disabled", true);
 
@@ -152,8 +176,17 @@ MyEForms.prototype = {
 
         $('body').on('click', 'button.remove', function() {
             event.preventDefault();
+            
+            $parent_upload_block = $(this).parent();
+            
+            var file_name =  $(this).parent().find('span').text();
+            
+            self.arrayOfAttachments = self.arrayOfAttachments.filter(function(el) {
+                return el !== file_name;
+            });
+            
             $(this).parent().remove();
-            //delete the file from the filesystem?      
+            
         });
 
 
@@ -186,6 +219,23 @@ MyEForms.prototype = {
             
             
             self.toggleAddAnother();
+        });
+        
+        $('#finishForm').on('click', function(event) {
+            event.preventDefault();
+                       
+            $.ajax({
+                type: "POST",
+                url: "CreateAttachmentsIndex",
+                dataType: "json",
+                data: JSON.stringify({ "claimantNumber":self.claimant_reference, "attachments": self.arrayOfAttachments}),
+                contentType:   'application/json',
+                processData:    false,
+                success: function(res) {
+                    console.log(res);
+                }
+            });
+            
         });
 
     },
@@ -224,6 +274,7 @@ MyEForms.prototype = {
             enctype: 'multipart/form-data',
             success: function(data, text) {
 
+                
                 if (typeof data.error == 'undefined') {
                     var file_input_parent_block = $(file_input).parent();
 
@@ -231,8 +282,11 @@ MyEForms.prototype = {
                     //hide error?
                     $('#files-upload').find('.response', '.error').text('');
 
+                    self.arrayOfAttachments.push(data.renamedFileName);
+                    console.log(self.arrayOfAttachments);
+                    
                     //replace the file input with a file name rather than disable
-                    $(file_input).replaceWith(data.fileName);
+                    $(file_input).replaceWith("<span>" + data.renamedFileName + "</span>");
 
                     //hide the upload button for this fieldset
                    $(file_input_parent_block).find('button').hide();
