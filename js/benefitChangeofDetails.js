@@ -6,7 +6,7 @@ var MyEForms = function() {
     self.arrayOfAttachments =[];
     self.claimant_reference= "12341234";
     self.pdf_file_name= self.claimant_reference + "_default_0510821234.jpg";
-    
+    self.unix_timestamp = "123456789";
     
 };
 
@@ -19,11 +19,11 @@ MyEForms.prototype = {
     addEventListeners: function() {
         
         //hide file uploads initially
-        //$('#files-upload').hide();
-        //$('#finishForm').hide();
+        $('#files-upload').hide();
+        $('#finishForm').hide();
         //temp show
-        $('#files-upload').show();
-        $('#finishForm').show();
+//      $('#files-upload').show();
+//      $('#finishForm').show();
 
         //yes / no conditional select
         this.selectSwitch('#agent-landlord-dependent', '#selectLandlordAgent');
@@ -105,6 +105,7 @@ MyEForms.prototype = {
                             
                             self.claimant_reference = res.caseReference;
                             self.pdf_file_name = res.pdfFileName;
+                            self.unix_timestamp = res.unixTimeStamp;
                             
                             $('#claimant-info').hide();
                             $('#change-of-address').hide();
@@ -151,23 +152,22 @@ MyEForms.prototype = {
             //user clicks upload
 
             event.preventDefault();
-            //TO DO DON"T ALLOW UPLOAD OF SAME TWICE???? CHECK THE OTHER INPUTS ON UPLOAD CLICK
-            console.log('value of input');
-            console.log($(this).val());
             
-            console.log('parent of this input');
-            console.log($(this).parent());
+            var this_file_name = $(this).parent().find('input:file').val().replace(/C:\\fakepath\\/i, '') ;
             
-            console.log('the elements in the parent');
-            $(this).parent().each(function(index, el){
-                
-                console.log(index);
-                console.log(el);
-                
-            });
+            var prev = $(this).parent().prevAll('fieldset');
+            
+            for(var s=0; s < prev.length; s++){             
+                var original_file_name =$(  'span.original-file-name', $(prev[s]) ).text();
+                if(   this_file_name ==  original_file_name ){
+                    $('p.response').text('Already uploaded this file before, choose a different one.');
+                    return false;
+                }
+            };
+
+            var parent_input = $(this).parent();
             
             $file_input = $(this).closest('.upload-file-block').find('input:file');
-//            $(this).prop("disabled", true);
 
             self.upload($file_input[0]);
 
@@ -179,7 +179,9 @@ MyEForms.prototype = {
             
             $parent_upload_block = $(this).parent();
             
-            var file_name =  $(this).parent().find('span').text();
+            var file_name =  $(this).parent().find('span.new-file-name').text();
+            
+            
             
             self.arrayOfAttachments = self.arrayOfAttachments.filter(function(el) {
                 return el !== file_name;
@@ -228,11 +230,17 @@ MyEForms.prototype = {
                 type: "POST",
                 url: "CreateAttachmentsIndex",
                 dataType: "json",
-                data: JSON.stringify({ "claimantNumber":self.claimant_reference, "attachments": self.arrayOfAttachments}),
+                data: JSON.stringify({"unixTimestamp":self.unix_timestamp, "claimantNumber":self.claimant_reference, "attachments": self.arrayOfAttachments}),
                 contentType:   'application/json',
                 processData:    false,
                 success: function(res) {
                     console.log(res);
+                    
+                    if(res.status == true){
+                        $('#finishForm').hide();                    
+                        $('#files-upload').replaceWith('<p id="success-message">Form successfully completed. Thank you for your submission.</p>');  
+                        $('#success-message').after('<p>If you have any issues please send a message through the <a href="http://www.northampton.gov.uk/contactthecouncil">contact form</a>.</p>')
+                    }
                 }
             });
             
@@ -247,19 +255,16 @@ MyEForms.prototype = {
         }
         
         //mime type checking
-        var accepted_mime_types = [ 'image/jpeg' ,  'image/png',  'image/gif'  ];
+        var accepted_mime_types = [ 'image/jpeg' ,  'image/png' ];
         
         if (  $.inArray(file_input.files[0].type , accepted_mime_types) == -1  ) {
-            $('#files-upload .response').text('must be a jpg, gif or png');
+            $('#files-upload .response').html('<span style="color:red">Must be a jpg or png</span>');
             return;
         }
         
         form_data.append("file", file_input.files[0]);        
         //we need to relate the images to the claimantNumber
         //we need to relate the images to the pdfFileName (via the Unix timestamp used)
-  
-        console.log(self.claimant_reference);
-        console.log(self.pdf_file_name);
         
         form_data.append("claimantNumber", self.claimant_reference);
         form_data.append("pdfFileName", self.pdf_file_name);
@@ -276,6 +281,8 @@ MyEForms.prototype = {
 
                 
                 if (typeof data.error == 'undefined') {
+
+                    
                     var file_input_parent_block = $(file_input).parent();
 
                     //file uploads successfully
@@ -286,7 +293,8 @@ MyEForms.prototype = {
                     console.log(self.arrayOfAttachments);
                     
                     //replace the file input with a file name rather than disable
-                    $(file_input).replaceWith("<span>" + data.renamedFileName + "</span>");
+                    $(file_input).replaceWith("<span class='new-file-name'>" + data.renamedFileName + "</span>"
+                    + "<span class='original-file-name' style='display:none;'>" +   file_input.files[0].name + "</span>");
 
                     //hide the upload button for this fieldset
                    $(file_input_parent_block).find('button').hide();
