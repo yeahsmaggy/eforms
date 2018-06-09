@@ -6,12 +6,12 @@ HTML forms with javascript validation using gulp, jquery, jade, browser-sync. Th
 
 - npm
 
-## How to install
+## How to install
 
 - clone the repo
 - run npm install
 - run gulp
 
-## Use
+## Use
 
 - Edit the jade files, javascript and scss
